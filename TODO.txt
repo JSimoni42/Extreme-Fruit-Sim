@@ -1,0 +1,18 @@
+Models
+- better lightbulb model
+- Implement JSON model importing
+- Picking
+
+Shadows and lighting
+- hook up to lightbulb
+
+- UI, Spawning, Reset
+- Blender Knifing and fragmented models
+
+- Decals
+- Animation and the “usability” of objects
+- Fruitsplosion
+
+- Particle effects
+- Textures and bump mapping
+- Quality Assurance and Stretch Goals

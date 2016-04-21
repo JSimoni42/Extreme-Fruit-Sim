@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Jenga - Physijs</title>
+	<title>FruitSim</title>
 	
 	<link rel="stylesheet" type="text/css" href="css/styles.css" />
 	
@@ -17,11 +17,21 @@
 	Physijs.scripts.worker = 'js/physijs_worker.js';
 	Physijs.scripts.ammo = 'ammo.js';
 	
-	var initScene, initEventHandling, render, createTower, loader,
+	var initScene, initEventHandling, render, spawnFruit, createTower, model_loader, texture_loader,
 		renderer, render_stats, physics_stats, scene, dir_light, am_light, camera,
 		table, blocks = [], table_material, block_material, intersect_plane,
 		selected_block = null, mouse_position = new THREE.Vector3, block_offset = new THREE.Vector3, _i, _v3 = new THREE.Vector3;
 	
+    var modelDirectory = "models/"; // Folder containing model files, relative to this HTML file
+	
+	var modelFileNames = [
+		"watermelon.json"
+    ];
+	
+	var modelRotations = [ // rotations to be applied to models
+    [0,0,0]
+    ];
+    
 	initScene = function() {
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize( window.innerWidth, window.innerHeight );
@@ -95,12 +105,24 @@
 		dir_light.shadowDarkness = .5;
 		scene.add( dir_light );
 
-		// Loader
-		loader = new THREE.TextureLoader();
+        
+        
+		// Loaders
+        model_loader = new THREE.JSONLoader();
+		texture_loader = new THREE.TextureLoader();
 		
+        //model importing
+        try {
+            console.log(modelDirectory + modelFileNames[0]); //printing to console 
+            loader.load(modelDirectory + modelFileNames[0], modelLoaded(geometry, modelRotations[0]));
+        }
+        catch (e) {
+            console.log("Failed to load model");
+        }
+        
 		// Materials
 		table_material = Physijs.createMaterial(
-			new THREE.MeshLambertMaterial({ map: loader.load( 'images/wood.jpg' )}),
+			new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood.jpg' )}),
 			.9, // high friction
 			.2 // low restitution
 		);
@@ -108,7 +130,7 @@
 		table_material.map.repeat.set( 5, 5 );
 		
 		block_material = Physijs.createMaterial(
-			new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' )}),
+			new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
 			.4, // medium friction
 			.4 // medium restitution
 		);
@@ -126,7 +148,8 @@
 		table.receiveShadow = true;
 		scene.add( table );
 		
-		createTower();
+		//spawnFruit(); //spawns a fruit object in the center of the table
+        createTower(); //creates the jenga tower from the physi.js example
 		
 		intersect_plane = new THREE.Mesh(
 			new THREE.PlaneGeometry( 150, 150 ),
@@ -146,7 +169,77 @@
 		renderer.render( scene, camera );
 		render_stats.update();
 	};
-	
+    
+/**
+ * This function will be called when the JSONLoader has
+ * finished loading a model.  This function creates a three.js
+ * Mesh object to hold the model.  It translates the object so that
+ * its center is at the origin.  It wraps the object in another object
+ * that is used to scale and rotate the object.  The scale is set
+ * so that the maximum coordinate in its vertices, in absolute
+ * value, is scaled to 10.  The rotation is set to the second parameter,
+ * which is used to set up an appropriate orientation for viewing
+ * the model.  A plain white Lambert material is used for the model;
+ * the material from the model file is ignored.
+ */ 
+    function modelLoaded(geometry, rotation) {
+
+        /* create the object from the geometry was loaded, with a white material. */
+           
+        var object = new THREE.Mesh(geometry,
+                            new THREE.MeshLambertMaterial( {color:"white"} ));
+
+        /* Determine the ranges of x, y, and z in the vertices of the geometry. */
+
+        var xmin = Infinity;
+        var xmax = -Infinity;
+        var ymin = Infinity;
+        var ymax = -Infinity;
+        var zmin = Infinity;
+        var zmax = -Infinity;
+        for (var i = 0; i < geometry.vertices.length; i++) {
+            var v = geometry.vertices[i];
+            if (v.x < xmin)
+                xmin = v.x;
+            else if (v.x > xmax)
+                xmax = v.x;
+            if (v.y < ymin)
+                ymin = v.y;
+            else if (v.y > ymax)
+                ymax = v.y;
+            if (v.z < zmin)
+                zmin = v.z;
+            else if (v.z > zmax)
+                zmax = v.z;
+        }
+        
+        /* translate the center of the object to the origin */
+        var centerX = (xmin+xmax)/2;
+        var centerY = (ymin+ymax)/2; 
+        var centerZ = (zmin+zmax)/2;
+        var max = Math.max(centerX - xmin, xmax - centerX);
+        max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
+        max = Math.max(max, Math.max(centerZ - zmin, zmax - centerZ) );
+        var scale = 10/max;
+        object.position.set( -centerX, -centerY, -centerZ );
+        if (window.console) {
+           console.log("Loading finished, scaling object by " + scale);
+           console.log("Center at ( " + centerX + ", " + centerY + ", " + centerZ + " )");
+        }
+        
+        /* Create the wrapper, model, to scale and rotate the object. */
+        
+        model = new THREE.Object3D();
+        model.add(object);
+        model.scale.set(scale,scale,scale);
+        model.rotation.set(rotation[0],rotation[1],rotation[2]);
+        scene.add(model);
+        render();
+    }
+    spawnFruit = (function() {
+        console.log("spawnFruit function called"); //test
+    });
+    
 	createTower = (function() {
 		var block_length = 6, block_height = 1, block_width = 1.5, block_offset = 2,
 			block_geometry = new THREE.BoxGeometry( block_length, block_height, block_width );
