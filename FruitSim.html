@@ -3,37 +3,26 @@
 <html>
 
 <head>
-	<title>FruitSim</title>
+	<title>Jenga - Physijs</title>
 	
 	<link rel="stylesheet" type="text/css" href="css/styles.css" />
 	
 	<script type="text/javascript" src="js/three.min.js"></script>
 	<script type="text/javascript" src="js/stats.js"></script>
-	<script type="text/javascript" src="../physi.js"></script>
+	<script type="text/javascript" src="js/physi.js"></script>
 	
 	<script type="text/javascript">
 	
 	'use strict';
 	
-	Physijs.scripts.worker = '../physijs_worker.js';
-	Physijs.scripts.ammo = 'examples/js/ammo.js';
+	Physijs.scripts.worker = 'js/physijs_worker.js';
+	Physijs.scripts.ammo = 'ammo.js';
 	
-	//clean up variables that arent being used
-	var initScene, initEventHandling, render, loader,
+	var initScene, initEventHandling, render, createTower, loader,
 		renderer, render_stats, physics_stats, scene, dir_light, am_light, camera,
-		table, fruit, table_material, fruit_material, vehicle, intersect_plane,
+		table, blocks = [], table_material, block_material, intersect_plane,
 		selected_block = null, mouse_position = new THREE.Vector3, block_offset = new THREE.Vector3, _i, _v3 = new THREE.Vector3;
 	
-	var modelDirectory = "models-json/"; // Folder containing model files, relative to this HTML file.
-	
-	var modelFileNames = [
-		"fruit"
-];
-	
-	var modelRotations = [ // rotations to be applied to models.
-    [0,0,0]
-];
-
 	initScene = function() {
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize( window.innerWidth, window.innerHeight );
@@ -119,12 +108,13 @@
 		table_material.map.wrapS = table_material.map.wrapT = THREE.RepeatWrapping;
 		table_material.map.repeat.set( 5, 5 );
 		
-		//look at table_material declaration for example on how to add wrap texture
-		fruit_material = Physijs.createMaterial(
-			new THREE.MeshLambertMaterial(),
-			.9, // high friction
-			.2 // low restitution
+		block_material = Physijs.createMaterial(
+			new THREE.MeshLambertMaterial({ map: loader.load( 'images/plywood.jpg' )}),
+			.4, // medium friction
+			.4 // medium restitution
 		);
+		block_material.map.wrapS = block_material.map.wrapT = THREE.RepeatWrapping;
+		block_material.map.repeat.set( 1, .5 );
 		
 		// Table
 		table = new Physijs.BoxMesh(
@@ -137,37 +127,7 @@
 		table.receiveShadow = true;
 		scene.add( table );
 		
-		// Box
-		fruit = new Physijs.BoxMesh(
-			new THREE.BoxGeometry(10,10,10),
-			fruit_material,
-			1, // mass
-			{restitution: .2, friction: .8}
-		);
-		fruit.position.y = 8;
-		fruit.castShadow = true;
-		scene.add(fruit);
-		
-		//Loading of JSON Models
-		var loader = new THREE.JSONLoader();
-		loader.load('models/mustang.js', function(geometry) {
-			/* var mesh = new Physijs.BoxMesh(
-					car,
-					new THREE.MeshFaceMaterial( car_materials )
-			);
-			mesh.position.y = 2;
-			mesh.castShadow = mesh.receiveShadow = true; */
-			vehicle = new Physijs.BoxMesh(
-				//new THREE.Mesh(geometry),
-				new THREE.BoxGeometry(5,5,5),
-				fruit_material,
-				1, //mass
-				{restitution: .2, friction: .8}
-			);
-			vehicle.position.y = 2;
-			//vehicle.position.x = 10;
-			scene.add(vehicle);
-		});
+		createTower();
 		
 		intersect_plane = new THREE.Mesh(
 			new THREE.PlaneGeometry( 150, 150 ),
@@ -175,7 +135,7 @@
 		);
 		intersect_plane.rotation.x = Math.PI / -2;
 		scene.add( intersect_plane );
-		
+
 		initEventHandling();
 		
 		requestAnimationFrame( render );
@@ -187,7 +147,34 @@
 		renderer.render( scene, camera );
 		render_stats.update();
 	};
-
+	
+	createTower = (function() {
+		var block_length = 6, block_height = 1, block_width = 1.5, block_offset = 2,
+			block_geometry = new THREE.BoxGeometry( block_length, block_height, block_width );
+		
+		return function() {
+			var i, j, rows = 16,
+				block;
+			
+			for ( i = 0; i < rows; i++ ) {
+				for ( j = 0; j < 3; j++ ) {
+					block = new Physijs.BoxMesh( block_geometry, block_material );
+					block.position.y = (block_height / 2) + block_height * i;
+					if ( i % 2 === 0 ) {
+						block.rotation.y = Math.PI / 2.01; // #TODO: There's a bug somewhere when this is to close to 2
+						block.position.x = block_offset * j - ( block_offset * 3 / 2 - block_offset / 2 );
+					} else {
+						block.position.z = block_offset * j - ( block_offset * 3 / 2 - block_offset / 2 );
+					}
+					block.receiveShadow = true;
+					block.castShadow = true;
+					scene.add( block );
+					blocks.push( block );
+				}
+			}
+		}
+	})();
+	
 	initEventHandling = (function() {
 		var _vector = new THREE.Vector3,
 			handleMouseDown, handleMouseMove, handleMouseUp;
@@ -269,8 +256,8 @@
 
 <body>
 	<div id="heading">
-		<h1>FruitSim</h1>
-		<p>""</p>
+		<h1>Jenga</h1>
+		<p>Click & drag on the blocks to move them around.</p>
 	</div>
 	<div id="viewport"></div>
 </body>
