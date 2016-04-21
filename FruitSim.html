@@ -17,10 +17,33 @@
 	Physijs.scripts.worker = 'js/physijs_worker.js';
 	Physijs.scripts.ammo = 'ammo.js';
 	
-	var initScene, initEventHandling, render, spawnFruit, createTower, model_loader, texture_loader,
-		renderer, render_stats, physics_stats, scene, dir_light, am_light, camera,
-		table, blocks = [], table_material, block_material, intersect_plane,
-		selected_block = null, mouse_position = new THREE.Vector3, block_offset = new THREE.Vector3, _i, _v3 = new THREE.Vector3;
+	var initScene;
+	var initEngine;
+	var initLights;
+	var initObjects;
+	var initEventHandling;
+	var render;
+	var spawnFruit;
+	var createTower;
+	var model_loader;
+	var texture_loader;
+	var renderer;
+	var render_stats;
+	var physics_stats;
+	var scene;
+	var dir_light;
+	var am_light;
+	var camera;
+	var table;
+	var blocks = [];
+	var table_material;
+	var block_material;
+	var intersect_plane;
+	var selected_block = null;
+	var mouse_position = new THREE.Vector3;
+	var block_offset = new THREE.Vector3;
+	var _i;
+	var _v3 = new THREE.Vector3;
 	
     var modelDirectory = "models/"; // Folder containing model files, relative to this HTML file
 	
@@ -32,7 +55,7 @@
     [0,0,0]
     ];
     
-	initScene = function() {
+	initEngine = function() {
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
@@ -84,7 +107,9 @@
 		camera.position.set( 0, 30, 70 );
 		camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
 		scene.add( camera );
-		
+	};
+	
+	initLights = function() {
 		// ambient light
 		am_light = new THREE.AmbientLight( 0x444444 );
 		scene.add( am_light );
@@ -104,9 +129,9 @@
 		dir_light.shadowMapWidth = dir_light.shadowMapHeight = 2048;
 		dir_light.shadowDarkness = .5;
 		scene.add( dir_light );
-
-        
-        
+	};
+	
+	initObjects = function() {
 		// Loaders
         model_loader = new THREE.JSONLoader();
 		texture_loader = new THREE.TextureLoader();
@@ -119,7 +144,7 @@
         catch (e) {
             console.log("Failed to load model");
         }
-        
+	
 		// Materials
 		table_material = Physijs.createMaterial(
 			new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood.jpg' )}),
@@ -136,6 +161,12 @@
 		);
 		block_material.map.wrapS = block_material.map.wrapT = THREE.RepeatWrapping;
 		block_material.map.repeat.set( 1, .5 );
+	};
+	
+	initScene = function() {
+		initEngine();
+        initLights();
+		initObjects();
 		
 		// Table
 		table = new Physijs.BoxMesh(
@@ -146,7 +177,7 @@
 		);
 		table.position.y = -.5;
 		table.receiveShadow = true;
-		scene.add( table );
+		scene.add(table);
 		
 		//spawnFruit(); //spawns a fruit object in the center of the table
         createTower(); //creates the jenga tower from the physi.js example

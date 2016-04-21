@@ -1,3 +1,5 @@
+- OOP metality with global variable organization, separate init functions for different components
+
 Models
 - better lightbulb model
 - Implement JSON model importing
