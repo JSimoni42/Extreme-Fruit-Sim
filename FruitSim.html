@@ -138,7 +138,7 @@
         //model importing
         try {
             console.log(modelDirectory + modelFileNames[0]); //printing to console 
-            loader.load(modelDirectory + modelFileNames[0], modelLoaded(geometry, modelRotations[0]));
+            model_loader.load(modelDirectory + modelFileNames[0], modelLoadedCallback);
         }
         catch (e) {
             console.log("Failed to load model");
@@ -199,7 +199,80 @@
         renderer.render( scene, camera );
         render_stats.update();
     };
+    
+function modelLoadedCallback(geometry, materials) {
+    console.log("in modelLoadedCallback");
+    //function (geometry, materials) {
+    if (globaltexture)
+        var material = new THREE.MeshLambertMaterial({
+            map: THREE.ImageUtils.loadTexture(globaltexture),
+            colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+            colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+            colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
+        });
+else 
+   var material = new THREE.MeshLambertMaterial({
+        colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+        colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+        colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
+      });
 
+
+  
+     var object = new THREE.Mesh(
+        geometry,
+        material
+      );
+
+ /* Determine the ranges of x, y, and z in the vertices of the geometry. */
+
+    var xmin = Infinity;
+    var xmax = -Infinity;
+    var ymin = Infinity;
+    var ymax = -Infinity;
+    var zmin = Infinity;
+    var zmax = -Infinity;
+    for (var i = 0; i < geometry.vertices.length; i++) {
+        var v = geometry.vertices[i];
+        if (v.x < xmin)
+            xmin = v.x;
+        else if (v.x > xmax)
+            xmax = v.x;
+        if (v.y < ymin)
+            ymin = v.y;
+        else if (v.y > ymax)
+            ymax = v.y;
+        if (v.z < zmin)
+            zmin = v.z;
+        else if (v.z > zmax)
+            zmax = v.z;
+    }
+    
+    /* translate the center of the object to the origin */
+    var centerX = (xmin+xmax)/2;
+    var centerY = (ymin+ymax)/2; 
+    var centerZ = (zmin+zmax)/2;
+    var max = Math.max(centerX - xmin, xmax - centerX);
+    max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
+    max = Math.max(max, Math.max(centerZ - zmin, zmax - centerZ) );
+    var scale = 100/max;
+    object.position.set( -centerX, -centerY, -centerZ );
+
+   
+    mesh = new THREE.Object3D();
+    mesh.add(object);
+    mesh.scale.set(scale,scale,scale);
+   
+
+      mesh.receiveShadow = true;
+      mesh.castShadow = true;
+      mesh.rotation.y = -Math.PI/5;
+     console.log("texture used " + globaltexture);
+      scene.add(mesh);
+      render();
+
+
+}
 /**
  * This function will be called when the JSONLoader has
  * finished loading a model.  This function creates a three.js
