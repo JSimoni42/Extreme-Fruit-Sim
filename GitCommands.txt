@@ -3,4 +3,6 @@
 3) git commit -m "Message Here"
 4) git push origin master
 
+
 ?) git status
+?) git pull
