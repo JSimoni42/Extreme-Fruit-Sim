@@ -200,96 +200,28 @@
         render_stats.update();
     };
     
-function modelLoadedCallback(geometry, materials) {
-    console.log("in modelLoadedCallback");
-    //function (geometry, materials) {
-    if (globaltexture)
-        var material = new THREE.MeshLambertMaterial({
-            map: THREE.ImageUtils.loadTexture(globaltexture),
-            colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-            colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-            colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
-        });
-else 
-   var material = new THREE.MeshLambertMaterial({
-        colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-        colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-        colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
-      });
-
-
-  
-     var object = new THREE.Mesh(
-        geometry,
-        material
-      );
-
- /* Determine the ranges of x, y, and z in the vertices of the geometry. */
-
-    var xmin = Infinity;
-    var xmax = -Infinity;
-    var ymin = Infinity;
-    var ymax = -Infinity;
-    var zmin = Infinity;
-    var zmax = -Infinity;
-    for (var i = 0; i < geometry.vertices.length; i++) {
-        var v = geometry.vertices[i];
-        if (v.x < xmin)
-            xmin = v.x;
-        else if (v.x > xmax)
-            xmax = v.x;
-        if (v.y < ymin)
-            ymin = v.y;
-        else if (v.y > ymax)
-            ymax = v.y;
-        if (v.z < zmin)
-            zmin = v.z;
-        else if (v.z > zmax)
-            zmax = v.z;
-    }
-    
-    /* translate the center of the object to the origin */
-    var centerX = (xmin+xmax)/2;
-    var centerY = (ymin+ymax)/2; 
-    var centerZ = (zmin+zmax)/2;
-    var max = Math.max(centerX - xmin, xmax - centerX);
-    max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
-    max = Math.max(max, Math.max(centerZ - zmin, zmax - centerZ) );
-    var scale = 100/max;
-    object.position.set( -centerX, -centerY, -centerZ );
-
-   
-    mesh = new THREE.Object3D();
-    mesh.add(object);
-    mesh.scale.set(scale,scale,scale);
-   
-
-      mesh.receiveShadow = true;
-      mesh.castShadow = true;
-      mesh.rotation.y = -Math.PI/5;
-     console.log("texture used " + globaltexture);
-      scene.add(mesh);
-      render();
-
-
-}
-/**
- * This function will be called when the JSONLoader has
- * finished loading a model.  This function creates a three.js
- * Mesh object to hold the model.  It translates the object so that
- * its center is at the origin.  It wraps the object in another object
- * that is used to scale and rotate the object.  The scale is set
- * so that the maximum coordinate in its vertices, in absolute
- * value, is scaled to 10.  The rotation is set to the second parameter,
- * which is used to set up an appropriate orientation for viewing
- * the model.  A plain white Lambert material is used for the model;
- * the material from the model file is ignored.
- */ 
-    function modelLoaded(geometry, rotation) {
-
-        /* create the object from the geometry was loaded, with a white material. */
-        var object = new THREE.Mesh(geometry,new THREE.MeshLambertMaterial( {color:"white"} ));
-
+    function modelLoadedCallback(geometry, materials) {
+        console.log("in modelLoadedCallback");
+        //function (geometry, materials) {
+        /* if (globaltexture) {
+            var material = new THREE.MeshLambertMaterial({
+                map: THREE.ImageUtils.loadTexture(globaltexture),
+                colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+                colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+                colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
+            });
+        }
+        else {
+            var material = new THREE.MeshLambertMaterial({
+                colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+                colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
+                colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
+            });
+        } */
+        var object = new THREE.Mesh(
+            geometry,
+            material
+        );
         /* Determine the ranges of x, y, and z in the vertices of the geometry. */
         var xmin = Infinity;
         var xmax = -Infinity;
@@ -312,7 +244,7 @@ else
             else if (v.z > zmax)
                 zmax = v.z;
         }
-        
+
         /* translate the center of the object to the origin */
         var centerX = (xmin+xmax)/2;
         var centerY = (ymin+ymax)/2; 
@@ -320,22 +252,21 @@ else
         var max = Math.max(centerX - xmin, xmax - centerX);
         max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
         max = Math.max(max, Math.max(centerZ - zmin, zmax - centerZ) );
-        var scale = 10/max;
+        var scale = 100/max;
         object.position.set( -centerX, -centerY, -centerZ );
-        if (window.console) {
-           console.log("Loading finished, scaling object by " + scale);
-           console.log("Center at ( " + centerX + ", " + centerY + ", " + centerZ + " )");
-        }
 
-        /* Create the wrapper, model, to scale and rotate the object. */
-        model = new THREE.Object3D();
-        model.add(object);
-        model.scale.set(scale,scale,scale);
-        model.rotation.set(rotation[0],rotation[1],rotation[2]);
-        scene.add(model);
+        mesh = new THREE.Object3D();
+        mesh.add(object);
+        mesh.scale.set(scale,scale,scale);
+   
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        mesh.rotation.y = -Math.PI/5;
+        console.log("texture used " + globaltexture);
+        scene.add(mesh);
         render();
     }
-    
+
     spawnFruit = (function() {
         console.log("spawnFruit function called"); //test
     });
