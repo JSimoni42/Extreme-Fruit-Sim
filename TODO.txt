@@ -6,9 +6,12 @@ Models
 Shadows and lighting
 - hook up to lightbulb
 
-- UI, Spawning, Reset
-- Blender Knifing and fragmented models
+UI
+- Spawning
+- Reset
+- turn on and off specific features/objectives
 
+- Blender Knifing and fragmented models
 - Decals
 - Animation and the “usability” of objects
 - Fruitsplosion
