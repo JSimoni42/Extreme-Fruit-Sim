@@ -3,19 +3,19 @@
 <html>
 <head>
 <title>FruitSim</title>
-	
+
 <link rel="stylesheet" type="text/css" href="css/styles.css" />
-	
+
 <script type="text/javascript" src="js/three.min.js"></script>
 <script type="text/javascript" src="js/stats.js"></script>
 <script type="text/javascript" src="js/physi.js"></script>
-	
-<script type="text/javascript">	
+
+<script type="text/javascript">
     'use strict';
-    
+
     Physijs.scripts.worker = 'js/physijs_worker.js';
     Physijs.scripts.ammo = 'ammo.js';
-    
+
     var initScene;
     var initEngine;
     var initLights;
@@ -43,7 +43,8 @@
     var block_offset = new THREE.Vector3;
     var _i;
     var _v3 = new THREE.Vector3;
-    
+		var fruits = [];
+
     var modelDirectory = "models/"; // Folder containing model files, relative to this HTML file
 
     var modelFileNames = [
@@ -53,7 +54,7 @@
     var modelRotations = [ // rotations to be applied to models
     [0,0,0]
     ];
-    
+
     initEngine = function() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -80,7 +81,7 @@
             function() {
 
                 if ( selected_block !== null ) {
-					
+
                     _v3.copy( mouse_position ).add( block_offset ).sub( selected_block.position ).multiplyScalar( 5 );
                     _v3.y = 0;
                     selected_block.setLinearVelocity( _v3 );
@@ -96,7 +97,7 @@
                 physics_stats.update();
             }
         );
-		
+
         camera = new THREE.PerspectiveCamera(
             35,
             window.innerWidth / window.innerHeight,
@@ -136,13 +137,22 @@
         texture_loader = new THREE.TextureLoader();
 
         //model importing
-        try {
-            console.log(modelDirectory + modelFileNames[0]); //printing to console 
-            model_loader.load(modelDirectory + modelFileNames[0], modelLoadedCallback);
-        }
-        catch (e) {
-            console.log("Failed to load model");
-        }
+        // try {
+        //     console.log(modelDirectory + modelFileNames[0]); //printing to console
+        //     model_loader.load(modelDirectory + modelFileNames[0], modelLoadedCallback);
+				//
+        // }
+        // catch (e) {
+        //     console.log("Failed to load model");
+        // }
+				model_loader.load("models/watermelon.json",
+					function(geometry, materials){
+							var material = new THREE.MeshLambertMaterial({color:0x199E43});
+							var object = new THREE.Mesh( geometry, material );
+							object.scale.set(10,10,10);
+							object.position.set(3,3,0);
+							scene.add(object);
+				} );
 
         // Materials
         table_material = Physijs.createMaterial(
@@ -166,7 +176,7 @@
         initEngine();
         initLights();
         initObjects();
-        
+
         // Table
         table = new Physijs.BoxMesh(
             new THREE.BoxGeometry(50, 1, 50),
@@ -179,7 +189,7 @@
         scene.add(table);
 
         //spawnFruit(); //spawns a fruit object in the center of the table
-        createTower(); //creates the jenga tower from the physi.js example
+        // createTower(); //creates the jenga tower from the physi.js example
 
         intersect_plane = new THREE.Mesh(
             new THREE.PlaneGeometry( 150, 150 ),
@@ -199,7 +209,7 @@
         renderer.render( scene, camera );
         render_stats.update();
     };
-    
+
     function modelLoadedCallback(geometry, materials) {
         console.log("in modelLoadedCallback");
         //function (geometry, materials) {
@@ -247,7 +257,7 @@
 
         /* translate the center of the object to the origin */
         var centerX = (xmin+xmax)/2;
-        var centerY = (ymin+ymax)/2; 
+        var centerY = (ymin+ymax)/2;
         var centerZ = (zmin+zmax)/2;
         var max = Math.max(centerX - xmin, xmax - centerX);
         max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
@@ -258,7 +268,7 @@
         mesh = new THREE.Object3D();
         mesh.add(object);
         mesh.scale.set(scale,scale,scale);
-   
+
         mesh.receiveShadow = true;
         mesh.castShadow = true;
         mesh.rotation.y = -Math.PI/5;
@@ -313,7 +323,7 @@
 
             if ( intersections.length > 0 ) {
                 selected_block = intersections[0].object;
-                
+
                 _vector.set( 0, 0, 0 );
                 selected_block.setAngularFactor( _vector );
                 selected_block.setAngularVelocity( _vector );
@@ -343,7 +353,7 @@
                 mouse_position.copy( intersection[0].point );
             }
         };
-        
+
         handleMouseUp = function( evt ) {
             if ( selected_block !== null ) {
                 _vector.set( 1, 1, 1 );
