@@ -1,3 +1,4 @@
 - (physi.js website)
 - (three.js example site and which specific examples)
 - (lab with JSON importing)
+- https://www.blender.org/api/blender_python_api_2_77_0/info_quickstart.html (Python Blender API)
