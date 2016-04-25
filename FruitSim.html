@@ -137,26 +137,7 @@
         // Loaders
         // model_loader = new THREE.JSONLoader();
         texture_loader = new THREE.TextureLoader();
-
-        //model importing
-        // try {
-        //     console.log(modelDirectory + modelFileNames[0]); //printing to console
-        //     model_loader.load(modelDirectory + modelFileNames[0], modelLoadedCallback);
-				//
-        // }
-        // catch (e) {
-        //     console.log("Failed to load model");
-        // }
-				// model_loader.load("models/watermelon.json",
-				// 	function(geometry, materials){
-				// 			var material = new THREE.MeshLambertMaterial({color:0x199E43});
-        //       var watermelon_material = Physijs.createMaterial( material, .9, .2);
-				// 			var object = new Physijs.ConvexMesh( geometry, watermelon_material, 5, {restitution:.2, friction:.8} );
-				// 			object.scale.set(10,10,10);
-				// 			object.position.set(3,3,0);
-				// 			scene.add(object);
-				// } );
-
+        
         // Materials
         table_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood.jpg' )}),
@@ -199,22 +180,8 @@
         table.receiveShadow = true;
         scene.add(table);
 
-        //spawnFruit(); //spawns a fruit object in the center of the table
-        model_loader = new THREE.JSONLoader();
-        model_loader.load("models/watermelon.json",
-        function(geometry, materials){
-              melon = new Physijs.ConvexMesh(
-                geometry,
-                melon_material,
-                5,
-                { retitution: 0.2, friction: 0.8 }
-              );
-							melon.scale.set(5,5,5);
-							melon.position.set(3,3,0);
-              scene.add(melon);
-				} );
-
-        // createTower(); //creates the jenga tower from the physi.js example
+        spawnFruit(); //spawns a fruit object in the center of the table
+        createTower(); //creates the jenga tower from the physi.js example
 
         intersect_plane = new THREE.Mesh(
             new THREE.PlaneGeometry( 150, 150 ),
@@ -235,75 +202,21 @@
         render_stats.update();
     };
 
-    function modelLoadedCallback(geometry, materials) {
-        console.log("in modelLoadedCallback");
-        //function (geometry, materials) {
-        /* if (globaltexture) {
-            var material = new THREE.MeshLambertMaterial({
-                map: THREE.ImageUtils.loadTexture(globaltexture),
-                colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-                colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-                colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
-            });
-        }
-        else {
-            var material = new THREE.MeshLambertMaterial({
-                colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-                colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-                colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
-            });
-        } */
-        var object = new THREE.Mesh(
-            geometry,
-            material
-        );
-        /* Determine the ranges of x, y, and z in the vertices of the geometry. */
-        var xmin = Infinity;
-        var xmax = -Infinity;
-        var ymin = Infinity;
-        var ymax = -Infinity;
-        var zmin = Infinity;
-        var zmax = -Infinity;
-        for (var i = 0; i < geometry.vertices.length; i++) {
-            var v = geometry.vertices[i];
-            if (v.x < xmin)
-                xmin = v.x;
-            else if (v.x > xmax)
-                xmax = v.x;
-            if (v.y < ymin)
-                ymin = v.y;
-            else if (v.y > ymax)
-                ymax = v.y;
-            if (v.z < zmin)
-                zmin = v.z;
-            else if (v.z > zmax)
-                zmax = v.z;
-        }
-
-        /* translate the center of the object to the origin */
-        var centerX = (xmin+xmax)/2;
-        var centerY = (ymin+ymax)/2;
-        var centerZ = (zmin+zmax)/2;
-        var max = Math.max(centerX - xmin, xmax - centerX);
-        max = Math.max(max, Math.max(centerY - ymin, ymax - centerY) );
-        max = Math.max(max, Math.max(centerZ - zmin, zmax - centerZ) );
-        var scale = 100/max;
-        object.position.set( -centerX, -centerY, -centerZ );
-
-        mesh = new THREE.Object3D();
-        mesh.add(object);
-        mesh.scale.set(scale,scale,scale);
-
-        mesh.receiveShadow = true;
-        mesh.castShadow = true;
-        mesh.rotation.y = -Math.PI/5;
-        console.log("texture used " + globaltexture);
-        scene.add(mesh);
-        render();
-    }
-
     spawnFruit = (function() {
         console.log("spawnFruit function called"); //test
+        model_loader = new THREE.JSONLoader();
+        model_loader.load("models/watermelon.json",
+        function(geometry, materials){
+              melon = new Physijs.BoxMesh( //was ConvexMesh, changed to BoxMesh to get object collision (need to find a way to make box bigger)
+                geometry,
+                melon_material,
+                5,
+                { retitution: 0.2, friction: 0.8 }
+              );
+							melon.scale.set(5,5,5);
+							melon.position.set(10,5,0); //was 3,3,0
+              scene.add(melon);
+		});
     });
 
     createTower = (function() {

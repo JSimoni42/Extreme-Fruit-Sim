@@ -2,7 +2,6 @@
 
 Models
 - better lightbulb model
-- Implement JSON model importing
 - Picking
 
 Shadows and lighting
