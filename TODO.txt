@@ -1,23 +1,28 @@
 Monday:
 - OOP metality with global variable organization, separate init functions for different components
-- Picking on imported objects
+- loaded other objects
+- Picking on imported objects (glide at certain level like the jenga pieces)
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
-- Textures and bump mapping
+- wall
+(- Textures and bump mapping)
 
 Tuesday:
-- Blender Knifing and fragmented models
 UI
 - Spawning
 - Reset
 - turn on and off specific features/objectives
+- hammer power bar
+
+- collision detection (physi.js eventlistener -> collision)
+- Blender Knifing and fragmented models (figure a better way)
 
 Wednesday:
-- Fruitsplosion
-- Decals
 - Animation and the “usability” of hammer
+- Fruitsplosion (troubleshooting)
+- Decals (hammer on table, fruit on table/wall)
 
 Thursday:
-- Particle effects
+- Particle effects (gnats around fruit)
 - better models
 - Animation and the “usability” of other objects

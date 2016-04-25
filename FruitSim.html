@@ -21,31 +21,38 @@
     var initLights;
     var initObjects;
     var initEventHandling;
+    
     var render;
+    
     var spawnFruit;
     var createTower;
+
     var model_loader;
     var texture_loader;
     var renderer;
+
     var render_stats;
     var physics_stats;
+
     var scene;
-    var dir_light;
-    var am_light;
+    var lights = {};
     var camera;
+
     var table;
     var blocks = [];
+    var melon;
+
     var table_material;
     var block_material;
+    var melon_material;
+
     var intersect_plane;
     var selected_block = null;
     var mouse_position = new THREE.Vector3;
     var block_offset = new THREE.Vector3;
+    
     var _i;
     var _v3 = new THREE.Vector3;
-		var fruits = [];
-    var melon_material;
-    var melon;
 
     var modelDirectory = "models/"; // Folder containing model files, relative to this HTML file
 
@@ -113,29 +120,28 @@
 
     initLights = function() {
         // ambient light
-        am_light = new THREE.AmbientLight( 0x444444 );
-        scene.add( am_light );
+        lights.am_light = new THREE.AmbientLight( 0x444444 );
+        scene.add(lights.am_light);
 
         // directional light
-        dir_light = new THREE.DirectionalLight( 0xFFFFFF );
-        dir_light.position.set( 20, 30, -5 );
-        dir_light.target.position.copy( scene.position );
-        dir_light.castShadow = true;
-        dir_light.shadowCameraLeft = -30;
-        dir_light.shadowCameraTop = -30;
-        dir_light.shadowCameraRight = 30;
-        dir_light.shadowCameraBottom = 30;
-        dir_light.shadowCameraNear = 20;
-        dir_light.shadowCameraFar = 200;
-        dir_light.shadowBias = -.001
-        dir_light.shadowMapWidth = dir_light.shadowMapHeight = 2048;
-        dir_light.shadowDarkness = .5;
-        scene.add( dir_light );
+        lights.dir_light = new THREE.DirectionalLight( 0xFFFFFF );
+        lights.dir_light.position.set( 20, 30, -5 );
+        lights.dir_light.target.position.copy( scene.position );
+        lights.dir_light.castShadow = true;
+        lights.dir_light.shadowCameraLeft = -30;
+        lights.dir_light.shadowCameraTop = -30;
+        lights.dir_light.shadowCameraRight = 30;
+        lights.dir_light.shadowCameraBottom = 30;
+        lights.dir_light.shadowCameraNear = 20;
+        lights.dir_light.shadowCameraFar = 200;
+        lights.dir_light.shadowBias = -.001
+        lights.dir_light.shadowMapWidth = lights.dir_light.shadowMapHeight = 2048;
+        lights.dir_light.shadowDarkness = .5;
+        scene.add(lights.dir_light);
     };
 
     initObjects = function() {
         // Loaders
-        // model_loader = new THREE.JSONLoader();
         texture_loader = new THREE.TextureLoader();
         
         // Materials
@@ -185,20 +191,20 @@
 
         intersect_plane = new THREE.Mesh(
             new THREE.PlaneGeometry( 150, 150 ),
-            new THREE.MeshBasicMaterial({ opacity: 0, transparent: true })
+            new THREE.MeshBasicMaterial({opacity: 0, transparent: true})
         );
         intersect_plane.rotation.x = Math.PI / -2;
-        scene.add( intersect_plane );
+        scene.add(intersect_plane);
 
         initEventHandling();
 
-        requestAnimationFrame( render );
+        requestAnimationFrame(render);
         scene.simulate();
     };
 
     render = function() {
-        requestAnimationFrame( render );
-        renderer.render( scene, camera );
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
         render_stats.update();
     };
 
@@ -207,15 +213,16 @@
         model_loader = new THREE.JSONLoader();
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
-              melon = new Physijs.BoxMesh( //was ConvexMesh, changed to BoxMesh to get object collision (need to find a way to make box bigger)
+            melon = new Physijs.BoxMesh( //was ConvexMesh, changed to BoxMesh to get object collision (need to find a way to make box bigger)
                 geometry,
                 melon_material,
                 5,
-                { retitution: 0.2, friction: 0.8 }
-              );
-							melon.scale.set(5,5,5);
-							melon.position.set(10,5,0); //was 3,3,0
-              scene.add(melon);
+                {retitution: 0.2, friction: 0.8}
+            );
+            melon.castShadow = true;
+            melon.scale.set(5,5,5);
+            melon.position.set(10,5,0); //was 3,3,0
+            scene.add(melon);
 		});
     });
 
