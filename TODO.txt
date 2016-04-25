@@ -1,22 +1,23 @@
+Monday:
 - OOP metality with global variable organization, separate init functions for different components
+- Picking on imported objects
+- hook up lightbulb to hinge (hanging above window view)
+- hook lighting up to lightbulb
+- Textures and bump mapping
 
-Models
-- better lightbulb model
-- Picking
-
-Shadows and lighting
-- hook up to lightbulb
-
+Tuesday:
+- Blender Knifing and fragmented models
 UI
 - Spawning
 - Reset
 - turn on and off specific features/objectives
 
-- Blender Knifing and fragmented models
-- Decals
-- Animation and the “usability” of objects
+Wednesday:
 - Fruitsplosion
+- Decals
+- Animation and the “usability” of hammer
 
+Thursday:
 - Particle effects
-- Textures and bump mapping
-- Quality Assurance and Stretch Goals
+- better models
+- Animation and the “usability” of other objects
