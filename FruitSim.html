@@ -180,12 +180,7 @@
     };
 
     initScene = function() {
-        //initEngine();
-        //initLights();
-        //initObjects();
-
-        // Table
-        table = new Physijs.BoxMesh(
+/*      table = new Physijs.BoxMesh(
             new THREE.BoxGeometry(50, 1, 50),
             table_material,
             0, // mass
@@ -193,9 +188,9 @@
         );
         table.position.y = -.5;
         table.receiveShadow = true;
-        scene.add(table);
+        scene.add(table); */
 
-/*      model_loader.load("models/table.json",
+        model_loader.load("models/table.json",
         function(geometry, materials){
             table2 = new Physijs.ConvexMesh(
                 geometry,
@@ -203,12 +198,10 @@
                 0, //mass
                 {retitution: 0.2, friction: 0.8}
             );
-            table2.scale.set(11,11,11);
-            table2.position.set(0,-25,0);
             table2.castShadow = true;
             table2.receiveShadow = true;
             scene.add(table2);
-		}); */
+		});
         
         model_loader.load("models/lightbulb.json",
         function(geometry, materials){
@@ -218,7 +211,6 @@
                 5, //mass
                 {retitution: 0.2, friction: 0.8}
             );
-            bulb.scale.set(2,2,2);
             bulb.position.set(-10,0,0);
             bulb.castShadow = true;
             scene.add(bulb);
@@ -233,7 +225,6 @@
                 5, //mass
                 {retitution: 0.2, friction: 0.8}
             );
-            hammer.scale.set(8,8,8);
             hammer.position.set(-10,0,10);
             hammer.rotation.set(0,-90,0);
             hammer.castShadow = true;
@@ -251,11 +242,6 @@
         );
         intersect_plane.rotation.x = Math.PI / -2;
         scene.add(intersect_plane);
-
-        //initEventHandling();
-
-        //requestAnimationFrame(render);
-        //scene.simulate();
     };
 
     render = function() {
@@ -270,12 +256,10 @@
             melon = new Physijs.ConvexMesh(
                 geometry,
                 melon_material,
-                5,
-                {retitution: 0.2, friction: 0.8}
+                15,
+                {retitution: 0.5, friction: 0.8}
             );
-            
-            melon.scale.set(5,5,5);
-            melon.position.set(10,0,0);
+            melon.position.set(15,5,0);
             melon.castShadow = true;
             melon.receiveShadow = true;
             scene.add(melon);
