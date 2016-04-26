@@ -1,6 +1,5 @@
 Monday:
 - OOP metality with global variable organization, separate init functions for different components
-- loaded other objects
 - Picking of imported objects (glide at certain level like the jenga pieces)
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
