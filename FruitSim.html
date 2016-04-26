@@ -20,7 +20,7 @@
     
     var render;
     
-    var spawnFruit;
+    var spawnFruit, resetAll;
     var createTower;
 
     var model_loader, texture_loader;
@@ -34,7 +34,7 @@
     var blocks = [];
     var floor, wall1, wall2, wall3;
     var table, melon, bulb, hammer;
-    var allFruits;
+    var allFruits = [];
     var fruitCounter = 0;
     var pickable_objects = [];
     
@@ -277,7 +277,7 @@
         scene.add(intersect_plane);
     };
     
-/*
+
     initGUI = function() {
 
         gui = new dat.GUI();
@@ -294,10 +294,13 @@
 
     
     resetAll = function() {
-        
-        
+        for (var i = 0; i < allFruits.length; i++) {
+            scene.remove(allFruits[i]);
+        }
+        fruitCounter = 0;
+        spawnFruit;
     }
-*/    
+
     
     
     render = function() {
@@ -309,16 +312,17 @@
     spawnFruit = function() {        
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
-            melon = new Physijs.ConvexMesh(
+            allFruits[fruitCounter] = new Physijs.ConvexMesh(
                 geometry,
                 melon_material,
                 20 //mass
             );
-            melon.position.set(15,0,0);
-            melon.castShadow = true;
-            melon.receiveShadow = true;
-            scene.add(melon);
-            pickable_objects.push(melon);
+            allFruits[fruitCounter].position.set(15,0,0);
+            allFruits[fruitCounter].castShadow = true;
+            allFruits[fruitCounter].receiveShadow = true;
+            scene.add(allFruits[fruitCounter]);
+            pickable_objects.push(allFruits[fruitCounter]);
+            fruitCounter += 1;
 		});
     };
 
