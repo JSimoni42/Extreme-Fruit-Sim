@@ -133,40 +133,46 @@
             .9, // high friction
             .2 // low restitution
         );
-        table_material.map.wrapS = table_material.map.wrapT = THREE.RepeatWrapping;
-        table_material.map.repeat.set( 5, 5 );
+        table_material.map.wrapS = THREE.RepeatWrapping;
+        table_material.map.wrapT = THREE.RepeatWrapping;
+        table_material.map.repeat.set(5, 5);
+        //lightMap for bumpmapping
 
         block_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
             .4, // medium friction
             .4 // medium restitution
         );
-        block_material.map.wrapS = block_material.map.wrapT = THREE.RepeatWrapping;
-        block_material.map.repeat.set( 1, .5 );
+        block_material.map.wrapS = THREE.RepeatWrapping;
+        block_material.map.wrapT = THREE.RepeatWrapping;
+        block_material.map.repeat.set(1, .5);
 
         melon_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/melon.jpg' )}),
           .4, // medium friction
           .4 // medium restitution
         );
-        melon_material.map.wrapS = melon_material.map.wrapT = THREE.RepeatWrapping;
-        melon_material.map.repeat.set( 1, .5 );
+        melon_material.map.wrapS = THREE.RepeatWrapping;
+        melon_material.map.wrapT = THREE.RepeatWrapping;
+        melon_material.map.repeat.set(5, 5);
         
         bulb_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/bulb.jpg' )}),
           .4, // medium friction
           .4 // medium restitution
         );
-        bulb_material.map.wrapS = bulb_material.map.wrapT = THREE.RepeatWrapping;
-        bulb_material.map.repeat.set( 1, .5 );
+        bulb_material.map.wrapS = THREE.RepeatWrapping;
+        bulb_material.map.wrapT = THREE.RepeatWrapping;
+        bulb_material.map.repeat.set(5, 5);
         
         hammer_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
           .4, // medium friction
           .4 // medium restitution
         );
-        hammer_material.map.wrapS = hammer_material.map.wrapT = THREE.RepeatWrapping;
-        hammer_material.map.repeat.set( 1, .5 );
+        hammer_material.map.wrapS = THREE.RepeatWrapping;
+        hammer_material.map.wrapT = THREE.RepeatWrapping;
+        hammer_material.map.repeat.set(5, 5);
     };
 
     initScene = function() {
@@ -176,8 +182,7 @@
         floor = new Physijs.BoxMesh(
             room_piece, 
             table_material,
-            0, // mass
-            {restitution: .2, friction: .8}
+            0 // mass
         );
         floor.position.set(0,-25,0);
         floor.receiveShadow = true;
@@ -186,8 +191,7 @@
         wall1 = new Physijs.BoxMesh(
             room_piece, 
             table_material,
-            0, // mass
-            {restitution: .2, friction: .8}
+            0 // mass
         );
         wall1.rotation.set((90*Math.PI/180),0,0);
         wall1.position.set(0,0,-25);
@@ -198,8 +202,7 @@
         wall2 = new Physijs.BoxMesh(
             room_piece, 
             table_material,
-            0, // mass
-            {restitution: .2, friction: .8}
+            0 // mass
         );
         wall2.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
         wall2.position.set(50,0,0);
@@ -210,8 +213,7 @@
         wall3 = new Physijs.BoxMesh(
             room_piece, 
             table_material,
-            0, // mass
-            {restitution: .2, friction: .8}
+            0 // mass
         );
         wall3.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
         wall3.position.set(-50,0,0);
@@ -237,7 +239,7 @@
             bulb = new Physijs.ConvexMesh(
                 geometry,
                 bulb_material,
-                5, //mass
+                2, //mass
                 {retitution: 0.2, friction: 0.8}
             );
             bulb.position.set(-10,0,0);
@@ -251,7 +253,7 @@
             hammer = new Physijs.ConvexMesh(
                 geometry,
                 hammer_material,
-                5, //mass
+                15, //mass
                 {retitution: 0.2, friction: 0.8}
             );
             hammer.position.set(-10,0,10);
@@ -285,10 +287,9 @@
             melon = new Physijs.ConvexMesh(
                 geometry,
                 melon_material,
-                15,
-                {retitution: 0.5, friction: 0.8}
+                20 //mass
             );
-            melon.position.set(15,5,0);
+            melon.position.set(15,0,0);
             melon.castShadow = true;
             melon.receiveShadow = true;
             scene.add(melon);
@@ -355,7 +356,6 @@
         };*/
         
         handleMouseDown = function(evt) {
-            var ray, intersections;
 			//ray.setFromCamera(mouse, camera);
             var ray, intersections;
             _vector.set(
@@ -373,6 +373,7 @@
 					if (intersections.length > 0) {
 						mouse_position.copy( intersections[0].point );
                         block_offset.subVectors( selected_obj.position, mouse_position );
+                        intersect_plane.position.y = mouse_position.y;
 					}
 					//container.style.cursor = 'move';
 				}
