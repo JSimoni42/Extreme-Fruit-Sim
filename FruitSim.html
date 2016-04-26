@@ -34,6 +34,8 @@
     var blocks = [];
     var floor, wall1, wall2, wall3;
     var table, melon, bulb, hammer;
+    var allFruits;
+    var fruitCounter = 0;
     var pickable_objects = [];
     
     var table_material, block_material, melon_material, bulb_material, hammer_material;
@@ -275,7 +277,7 @@
         scene.add(intersect_plane);
     };
     
-/*    
+/*
     initGUI = function() {
 
         gui = new dat.GUI();
@@ -289,8 +291,15 @@
   
         gui.open();
     };
-*/    
 
+    
+    resetAll = function() {
+        
+        
+    }
+*/    
+    
+    
     render = function() {
         requestAnimationFrame(render);
         renderer.render(scene, camera);
