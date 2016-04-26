@@ -1,0 +1,8 @@
+1) git pull
+2) git add --all
+3) git commit -m "Message Here"
+4) git push origin master
+
+
+?) git status
+?) git clone (HTTPS link from github)
