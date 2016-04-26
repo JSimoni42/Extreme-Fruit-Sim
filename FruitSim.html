@@ -40,11 +40,17 @@
 
     var table;
     var blocks = [];
+    var table2;
     var melon;
+    var bulb;
+    var hammer;
+    
 
     var table_material;
     var block_material;
     var melon_material;
+    var bulb_material;
+    var hammer_material;
 
     var intersect_plane;
     var selected_block = null;
@@ -143,6 +149,7 @@
     initObjects = function() {
         // Loaders
         texture_loader = new THREE.TextureLoader();
+        model_loader = new THREE.JSONLoader();
         
         // Materials
         table_material = Physijs.createMaterial(
@@ -166,8 +173,24 @@
           .4, // medium friction
           .4 // medium restitution
         );
-        melon_material.map.wrapS = block_material.map.wrapT = THREE.RepeatWrapping;
+        melon_material.map.wrapS = melon_material.map.wrapT = THREE.RepeatWrapping;
         melon_material.map.repeat.set( 1, .5 );
+        
+        bulb_material = Physijs.createMaterial(
+          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/melon.jpg' )}),
+          .4, // medium friction
+          .4 // medium restitution
+        );
+        bulb_material.map.wrapS = bulb_material.map.wrapT = THREE.RepeatWrapping;
+        bulb_material.map.repeat.set( 1, .5 );
+        
+        hammer_material = Physijs.createMaterial(
+          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/melon.jpg' )}),
+          .4, // medium friction
+          .4 // medium restitution
+        );
+        hammer_material.map.wrapS = hammer_material.map.wrapT = THREE.RepeatWrapping;
+        hammer_material.map.repeat.set( 1, .5 );
     };
 
     initScene = function() {
@@ -186,6 +209,51 @@
         table.receiveShadow = true;
         scene.add(table);
 
+/*         model_loader.load("models/table.json",
+        function(geometry, materials){
+            table2 = new Physijs.ConvexMesh(
+                geometry,
+                table_material,
+                0, //mass
+                {retitution: 0.2, friction: 0.8}
+            );
+            table2.scale.set(11,11,11);
+            table2.position.set(0,-25,0);
+            table2.castShadow = true;
+            table2.receiveShadow = true;
+            scene.add(table2);
+		});         */
+        
+        model_loader.load("models/lightbulb.json",
+        function(geometry, materials){
+            bulb = new Physijs.ConvexMesh(
+                geometry,
+                bulb_material,
+                5, //mass
+                {retitution: 0.2, friction: 0.8}
+            );
+            bulb.scale.set(2,2,2);
+            bulb.position.set(-10,0,0);
+            bulb.castShadow = true;
+            scene.add(bulb);
+		});
+        
+        model_loader.load("models/hammer.json",
+        function(geometry, materials){
+            hammer = new Physijs.ConvexMesh(
+                geometry,
+                hammer_material,
+                5, //mass
+                {retitution: 0.2, friction: 0.8}
+            );
+            hammer.scale.set(8,8,8);
+            hammer.position.set(-10,0,10);
+            hammer.rotation.set(0,-90,0);
+            hammer.castShadow = true;
+            hammer.receiveShadow = true;            
+            scene.add(hammer);
+		});
+        
         spawnFruit(); //spawns a fruit object in the center of the table
         createTower(); //creates the jenga tower from the physi.js example
 
@@ -208,20 +276,20 @@
         render_stats.update();
     };
 
-    spawnFruit = (function() {
-        console.log("spawnFruit function called"); //test
-        model_loader = new THREE.JSONLoader();
+    spawnFruit = (function() {        
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
-            melon = new Physijs.BoxMesh( //was ConvexMesh, changed to BoxMesh to get object collision (need to find a way to make box bigger)
+            melon = new Physijs.ConvexMesh(
                 geometry,
                 melon_material,
                 5,
                 {retitution: 0.2, friction: 0.8}
             );
-            melon.castShadow = true;
+            
             melon.scale.set(5,5,5);
-            melon.position.set(10,5,0); //was 3,3,0
+            melon.position.set(10,0,0);
+            melon.castShadow = true;
+            melon.receiveShadow = true;
             scene.add(melon);
 		});
     });
@@ -266,14 +334,14 @@
             ray = new THREE.Raycaster( camera.position, _vector.sub( camera.position ).normalize() );
             intersections = ray.intersectObjects( blocks );
 
-            if ( intersections.length > 0 ) {
+            if (intersections.length > 0) {
                 selected_block = intersections[0].object;
 
-                _vector.set( 0, 0, 0 );
-                selected_block.setAngularFactor( _vector );
-                selected_block.setAngularVelocity( _vector );
-                selected_block.setLinearFactor( _vector );
-                selected_block.setLinearVelocity( _vector );
+                _vector.set(0, 0, 0);
+                selected_block.setAngularFactor(_vector);
+                selected_block.setAngularVelocity(_vector);
+                selected_block.setLinearFactor(_vector);
+                selected_block.setLinearVelocity(_vector);
 
                 mouse_position.copy( intersections[0].point );
                 block_offset.subVectors( selected_block.position, mouse_position );
@@ -282,20 +350,20 @@
             }
         };
 
-        handleMouseMove = function( evt ) {
+        handleMouseMove = function(evt) {
             var ray, intersection,
                 i, scalar;
 
-            if ( selected_block !== null ) {
+            if (selected_block !== null) {
                 _vector.set(
-                    ( evt.clientX / window.innerWidth ) * 2 - 1,
-                    -( evt.clientY / window.innerHeight ) * 2 + 1,
+                    (evt.clientX / window.innerWidth) * 2 - 1,
+                    -(evt.clientY / window.innerHeight) * 2 + 1,
                     1
                 );
-                _vector.unproject( camera );
-                ray = new THREE.Raycaster( camera.position, _vector.sub( camera.position ).normalize() );
-                intersection = ray.intersectObject( intersect_plane );
-                mouse_position.copy( intersection[0].point );
+                _vector.unproject(camera);
+                ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
+                intersection = ray.intersectObject(intersect_plane);
+                mouse_position.copy(intersection[0].point);
             }
         };
 
