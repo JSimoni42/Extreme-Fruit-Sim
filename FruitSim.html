@@ -31,9 +31,9 @@
     var lights = {};
     var camera;
 
-    var table;
     var blocks = [];
-    var table2, melon, bulb, hammer;
+    var floor, wall1, wall2, wall3;
+    var table, melon, bulb, hammer;
     var pickable_objects = [];
     
     var table_material, block_material, melon_material, bulb_material, hammer_material;
@@ -106,7 +106,7 @@
             1000
         );
         camera.position.set( 0, 30, 70 );
-        camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
         scene.add( camera );
     };
 
@@ -118,7 +118,7 @@
         // directional light
         lights.dir_light = new THREE.DirectionalLight( 0xFFFFFF );
         lights.dir_light.position.set( 20, 30, -5 );
-        lights.dir_light.target.position.copy( scene.position );
+        lights.dir_light.target.position.copy(scene.position);
         lights.dir_light.castShadow = true;
         lights.dir_light.shadowCameraLeft = -30;
         lights.dir_light.shadowCameraTop = -30;
@@ -180,27 +180,66 @@
     };
 
     initScene = function() {
-/*      table = new Physijs.BoxMesh(
-            new THREE.BoxGeometry(50, 1, 50),
+        
+        var room_piece = new THREE.BoxGeometry(100, 1, 100);
+        
+        floor = new Physijs.BoxMesh(
+            room_piece, 
             table_material,
             0, // mass
-            { restitution: .2, friction: .8 }
+            {restitution: .2, friction: .8}
         );
-        table.position.y = -.5;
-        table.receiveShadow = true;
-        scene.add(table); */
-
+        floor.position.set(0,-25,0);
+        floor.receiveShadow = true;
+        scene.add(floor);
+        
+        wall1 = new Physijs.BoxMesh(
+            room_piece, 
+            table_material,
+            0, // mass
+            {restitution: .2, friction: .8}
+        );
+        wall1.rotation.set((90*Math.PI/180),0,0);
+        wall1.position.set(0,0,-25);
+        wall1.castShadow = true;
+        wall1.receiveShadow = true;
+        scene.add(wall1);
+        
+        wall2 = new Physijs.BoxMesh(
+            room_piece, 
+            table_material,
+            0, // mass
+            {restitution: .2, friction: .8}
+        );
+        wall2.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
+        wall2.position.set(50,0,0);
+        wall2.castShadow = true;
+        wall2.receiveShadow = true;
+        scene.add(wall2);
+        
+        wall3 = new Physijs.BoxMesh(
+            room_piece, 
+            table_material,
+            0, // mass
+            {restitution: .2, friction: .8}
+        );
+        wall3.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
+        wall3.position.set(-50,0,0);
+        wall3.castShadow = true;
+        wall3.receiveShadow = true;
+        scene.add(wall3);
+        
         model_loader.load("models/table.json",
         function(geometry, materials){
-            table2 = new Physijs.ConvexMesh(
+            table = new Physijs.ConvexMesh(
                 geometry,
                 table_material,
                 0, //mass
                 {retitution: 0.2, friction: 0.8}
             );
-            table2.castShadow = true;
-            table2.receiveShadow = true;
-            scene.add(table2);
+            table.castShadow = true;
+            table.receiveShadow = true;
+            scene.add(table);
 		});
         
         model_loader.load("models/lightbulb.json",
