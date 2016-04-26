@@ -16,7 +16,7 @@
     Physijs.scripts.worker = 'js/physijs_worker.js';
     Physijs.scripts.ammo = 'ammo.js';
 
-    var init, initEngine, initLights, initObjects, initScene, initEventHandling;
+    var init, initEngine, initLights, initObjects, initScene, initGUI, initEventHandling;
     
     var render;
     
@@ -274,6 +274,22 @@
         intersect_plane.rotation.x = Math.PI / -2;
         scene.add(intersect_plane);
     };
+    
+/*    
+    initGUI = function() {
+
+        gui = new dat.GUI();
+        parameters = {
+            //reset: function() { resetAll() },
+            spawn: function() { spawnFruit() }
+        };
+  
+        //gui.add( parameters, 'reset' ).name("Reset to Default Values");
+        gui.add( parameters, 'spawn' ).name("Spawn Fruit");
+  
+        gui.open();
+    };
+*/    
 
     render = function() {
         requestAnimationFrame(render);
