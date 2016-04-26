@@ -4,8 +4,7 @@ Monday:
 
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
-- wall
-(- Textures and bump mapping)
+(- Textures (lab on moodle) and bump mapping)
 
 Tuesday:
 UI

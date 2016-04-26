@@ -46,16 +46,6 @@
     var _i;
     var _v3 = new THREE.Vector3;
 
-    var modelDirectory = "models/"; // Folder containing model files, relative to this HTML file
-
-    var modelFileNames = [
-        "watermelon.json"
-    ];
-
-    var modelRotations = [ // rotations to be applied to models
-    [0,0,0]
-    ];
-
     initEngine = function() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -88,7 +78,7 @@
                     selected_obj.setLinearVelocity( _v3 );
 
                     // Reactivate all of the blocks
-                    _v3.set( 0, 0, 0 );
+                    _v3.set(0, 0, 0);
                     for ( _i = 0; _i < blocks.length; _i++ ) {
                         blocks[_i].applyCentralImpulse( _v3 );
                     }
@@ -117,7 +107,7 @@
 
         // directional light
         lights.dir_light = new THREE.DirectionalLight( 0xFFFFFF );
-        lights.dir_light.position.set( 20, 30, -5 );
+        lights.dir_light.position.set(20, 35, -5);
         lights.dir_light.target.position.copy(scene.position);
         lights.dir_light.castShadow = true;
         lights.dir_light.shadowCameraLeft = -30;
@@ -336,7 +326,7 @@
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
 
-/*         handleMouseDown = function(evt) {
+/*      handleMouseDown = function(evt) {
             var ray, intersections;
 			_vector.set(
                 (evt.clientX / window.innerWidth) * 2 - 1,
