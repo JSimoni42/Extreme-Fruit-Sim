@@ -16,23 +16,16 @@
     Physijs.scripts.worker = 'js/physijs_worker.js';
     Physijs.scripts.ammo = 'ammo.js';
 
-    var initScene;
-    var initEngine;
-    var initLights;
-    var initObjects;
-    var initEventHandling;
+    var init, initEngine, initLights, initObjects, initScene, initEventHandling;
     
     var render;
     
     var spawnFruit;
     var createTower;
 
-    var model_loader;
-    var texture_loader;
-    var renderer;
-
-    var render_stats;
-    var physics_stats;
+    var model_loader, texture_loader;
+    
+    var container, renderer, render_stats, physics_stats;
 
     var scene;
     var lights = {};
@@ -40,17 +33,10 @@
 
     var table;
     var blocks = [];
-    var table2;
-    var melon;
-    var bulb;
-    var hammer;
+    var table2, melon, bulb, hammer;
     var pickable_objects = [];
     
-    var table_material;
-    var block_material;
-    var melon_material;
-    var bulb_material;
-    var hammer_material;
+    var table_material, block_material, melon_material, bulb_material, hammer_material;
 
     var intersect_plane;
     var selected_obj = null;
@@ -194,9 +180,9 @@
     };
 
     initScene = function() {
-        initEngine();
-        initLights();
-        initObjects();
+        //initEngine();
+        //initLights();
+        //initObjects();
 
         // Table
         table = new Physijs.BoxMesh(
@@ -266,10 +252,10 @@
         intersect_plane.rotation.x = Math.PI / -2;
         scene.add(intersect_plane);
 
-        initEventHandling();
+        //initEventHandling();
 
-        requestAnimationFrame(render);
-        scene.simulate();
+        //requestAnimationFrame(render);
+        //scene.simulate();
     };
 
     render = function() {
@@ -278,7 +264,7 @@
         render_stats.update();
     };
 
-    spawnFruit = (function() {        
+    spawnFruit = function() {        
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
             melon = new Physijs.ConvexMesh(
@@ -295,9 +281,9 @@
             scene.add(melon);
             pickable_objects.push(melon);
 		});
-    });
+    };
 
-    createTower = (function() {
+    createTower = function() {
         var block_length = 6, block_height = 1, block_width = 1.5, block_offset = 2,
             block_geometry = new THREE.BoxGeometry( block_length, block_height, block_width );
         return function() {
@@ -315,14 +301,15 @@
                     }
                     block.receiveShadow = true;
                     block.castShadow = true;
-                    scene.add( block );
-                    blocks.push( block );
+                    scene.add(block);
+                    pickable_objects.push(block);
+                    blocks.push(block);
                 }
             }
         }
-    })();
-
-    initEventHandling = (function() {
+    }();
+    
+    initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
 
@@ -397,7 +384,7 @@
 
         handleMouseUp = function( evt ) {
             if (selected_obj !== null) {
-                _vector.set( 1, 1, 1 );
+                _vector.set(1, 1, 1);
                 selected_obj.setAngularFactor( _vector );
                 selected_obj.setLinearFactor( _vector );
 				selected_obj = null;
@@ -408,9 +395,20 @@
             renderer.domElement.addEventListener( 'mousemove', handleMouseMove );
             renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
         };
-    })();
+    }();
+    
+    init = function() {
+        initEngine();
+        initLights();
+        initObjects();
+        initScene();
+        initEventHandling();
+        requestAnimationFrame(render);
+        scene.simulate();
+    };
+    
 
-window.onload = initScene;
+window.onload = init;
 </script>
 </head>
 
