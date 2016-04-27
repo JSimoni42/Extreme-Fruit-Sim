@@ -22,8 +22,8 @@
     var render;
     
     var gui;
-    var power;
-    var spawnFruit, spawnBulb, spawnHammer, resetAll;
+    var power, resetAll;
+    var spawnFruit, spawnBulb, spawnHammer, spawnPieces, spawnDecal;
     var createTower;
 
     var model_loader, texture_loader;
@@ -43,9 +43,6 @@
     var lightX = 20;
     var lightY = 35;
     var lightZ = -5;
-    
-    var hammer_collision;
-    var fruit_collision = [];
     
     var table_material, block_material, melon_material, bulb_material, hammer_material;
 
@@ -325,8 +322,8 @@
             hammer.receiveShadow = true;    
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) { 
-                if (String(other_object.name).substring(0, 5) == "fruit") {
-                    scene.remove(other_object);
+                if (String(other_object.name).substring(0, 5) == "fruit") { //if object is fruit. need to add height and power or velocity requirements for hammer
+                    scene.remove(other_object); //replace with spawnPieces function
                 }
             });
             
