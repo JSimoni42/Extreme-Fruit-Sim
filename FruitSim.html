@@ -240,7 +240,7 @@
         
         spawnBulb();
         spawnHammer();
-        spawnFruit(); //spawns a fruit object in the center of the table
+        spawnFruit();
 
         intersect_plane = new THREE.Mesh(
             new THREE.PlaneGeometry( 150, 150 ),
@@ -252,10 +252,8 @@
     
 
     initGUI = function() {
-
         gui = new dat.GUI();
-        var parameters = 
-        {
+        var parameters = {
             reset: function() { resetAll() },
             spawn: function() { spawnFruit() }
         };
@@ -263,7 +261,6 @@
         gui.add( parameters, 'spawn' ).name("Spawn Fruit");
   
         gui.open();
-        
     };
     
     resetAll = function() {
@@ -276,10 +273,10 @@
         scene.remove(hammer);
         scene.remove(bulb);
         pickable_objects = [];
+        
         spawnHammer();
         spawnBulb();
         spawnFruit();
-        
     }
     
     render = function() {
@@ -330,7 +327,7 @@
                 melon_material,
                 20 //mass
             );
-            allFruits[fruitCounter].position.set(15,0,0);
+            allFruits[fruitCounter].position.set(2,0,0);
             allFruits[fruitCounter].castShadow = true;
             allFruits[fruitCounter].receiveShadow = true;
             scene.add(allFruits[fruitCounter]);
@@ -344,7 +341,6 @@
             handleMouseDown, handleMouseMove, handleMouseUp;
         
         handleMouseDown = function(evt) {
-			//ray.setFromCamera(mouse, camera);
             var ray, intersections;
             _vector.set(
                 (evt.clientX / window.innerWidth) * 2 - 1,
@@ -353,21 +349,21 @@
             );
             _vector.unproject(camera);
             ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
-                intersections = ray.intersectObjects(pickable_objects);
-                if (intersections.length > 0) {
-                    selected_obj = intersections[ 0 ].object;
+            intersections = ray.intersectObjects(pickable_objects);
+            if (intersections.length > 0) {
+                selected_obj = intersections[0].object;
                     
-                    _vector.set(0, 0, 0);
-                    selected_obj.setAngularFactor(_vector);
-                    selected_obj.setAngularVelocity(_vector);
-                    selected_obj.setLinearFactor(_vector);
-                    selected_obj.setLinearVelocity(_vector);
+                _vector.set(0, 0, 0);
+                selected_obj.setAngularFactor(_vector);
+                selected_obj.setAngularVelocity(_vector);
+                selected_obj.setLinearFactor(_vector);
+                selected_obj.setLinearVelocity(_vector);
+
+                mouse_position.copy(intersections[0].point);
+                block_offset.subVectors(selected_obj.position, mouse_position);
                     
-                    mouse_position.copy( intersections[0].point );
-                    block_offset.subVectors( selected_obj.position, mouse_position );
-                    
-                    intersect_plane.position.y = mouse_position.y;
-                    //container.style.cursor = 'move';
+                intersect_plane.position.y = mouse_position.y;
+                //container.style.cursor = 'move';
 				}
         }
         
@@ -393,14 +389,16 @@
                 _vector.set(1, 1, 1);
                 selected_obj.setAngularFactor( _vector );
                 selected_obj.setLinearFactor( _vector );
+                selected_obj.setAngularVelocity(_vector);
 				selected_obj = null;
             }
         };
+        
         return function() {
             renderer.domElement.addEventListener( 'mousedown', handleMouseDown );
             renderer.domElement.addEventListener( 'mousemove', handleMouseMove );
             renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
-            renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
+            //renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
         };
     }();
     
@@ -421,10 +419,6 @@ window.onload = init;
 </head>
 
 <body>
-    <div id="heading">
-        <h1>FruitSim</h1>
-        <p>A Work in Progress...</p>
-    </div>
     <div id="viewport"></div>
 </body>
 
