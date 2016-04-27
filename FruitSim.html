@@ -275,6 +275,7 @@
         
         scene.remove(hammer);
         scene.remove(bulb);
+        pickable_objects = [];
         spawnHammer();
         spawnBulb();
         spawnFruit();
@@ -398,6 +399,7 @@
         return function() {
             renderer.domElement.addEventListener( 'mousedown', handleMouseDown );
             renderer.domElement.addEventListener( 'mousemove', handleMouseMove );
+            renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
             renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
         };
     }();
