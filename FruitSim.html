@@ -22,6 +22,7 @@
     var render;
     
     var gui;
+    var power;
     var spawnFruit, spawnBulb, spawnHammer, resetAll;
     var createTower;
 
@@ -249,15 +250,20 @@
     
 
     initGUI = function() {
+
         gui = new dat.GUI();
-        var parameters = {
-            reset: function() { resetAll() },
-            spawn: function() { spawnFruit() }
+        var parameters = 
+        {
+            Power: 50,
+            spawn: function() { spawnFruit() },
+            reset: function() { resetAll() }
         };
-        gui.add( parameters, 'reset' ).name("Reset to Default Values");
+        power = gui.add( parameters, 'Power' ).min(0).max(100).step(1).listen();
         gui.add( parameters, 'spawn' ).name("Spawn Fruit");
+        gui.add( parameters, 'reset' ).name("Reset to Default Values");
   
         gui.open();
+        
     };
     
     resetAll = function() {
