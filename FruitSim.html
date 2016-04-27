@@ -44,7 +44,7 @@
     var lightY = 35;
     var lightZ = -5;
     
-    var table_material, block_material, melon_material, bulb_material, hammer_material;
+    var floor_material, wall_material, table_material, hammer_material, melon_material, bulb_material, hammer_material;
 
     var intersect_plane;
     var selected_obj = null;
@@ -130,9 +130,27 @@
     initObjects = function() {
         // Loaders
         texture_loader = new THREE.TextureLoader();
-        model_loader = new THREE.JSONLoader();
+        
+        floor_material = Physijs.createMaterial(
+            new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood2.jpg' )}),
+            .9, // high friction
+            .2 // low restitution
+        );
+        floor_material.map.wrapS = THREE.RepeatWrapping;
+        floor_material.map.wrapT = THREE.RepeatWrapping;
+        floor_material.map.repeat.set(3, 3);
         
         // Materials
+        wall_material = Physijs.createMaterial(
+            new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/cinderblock.jpg' )}),
+            .9, // high friction
+            .2 // low restitution
+        );
+        wall_material.map.wrapS = THREE.RepeatWrapping;
+        wall_material.map.wrapT = THREE.RepeatWrapping;
+        wall_material.map.repeat.set(1.5, 1.5);
+        //lightMap for bumpmapping
+        
         table_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood.jpg' )}),
             .9, // high friction
@@ -140,17 +158,16 @@
         );
         table_material.map.wrapS = THREE.RepeatWrapping;
         table_material.map.wrapT = THREE.RepeatWrapping;
-        table_material.map.repeat.set(5, 5);
-        //lightMap for bumpmapping
+        table_material.map.repeat.set(1.5, 1.5);
 
-        block_material = Physijs.createMaterial(
+        hammer_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
             .4, // medium friction
             .4 // medium restitution
         );
-        block_material.map.wrapS = THREE.RepeatWrapping;
-        block_material.map.wrapT = THREE.RepeatWrapping;
-        block_material.map.repeat.set(1, .5);
+        hammer_material.map.wrapS = THREE.RepeatWrapping;
+        hammer_material.map.wrapT = THREE.RepeatWrapping;
+        hammer_material.map.repeat.set(1, 1);
 
         melon_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/melon.jpg' )}),
@@ -159,7 +176,7 @@
         );
         melon_material.map.wrapS = THREE.RepeatWrapping;
         melon_material.map.wrapT = THREE.RepeatWrapping;
-        melon_material.map.repeat.set(5, 5);
+        melon_material.map.repeat.set(.5, .5);
         
         bulb_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/bulb.jpg' )}),
@@ -169,24 +186,16 @@
         bulb_material.map.wrapS = THREE.RepeatWrapping;
         bulb_material.map.wrapT = THREE.RepeatWrapping;
         bulb_material.map.repeat.set(5, 5);
-        
-        hammer_material = Physijs.createMaterial(
-          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
-          .4, // medium friction
-          .4 // medium restitution
-        );
-        hammer_material.map.wrapS = THREE.RepeatWrapping;
-        hammer_material.map.wrapT = THREE.RepeatWrapping;
-        hammer_material.map.repeat.set(5, 5);
     };
 
     initScene = function() {
+        model_loader = new THREE.JSONLoader();
         
         var room_piece = new THREE.BoxGeometry(100, 1, 100);
         
         floor = new Physijs.BoxMesh(
             room_piece, 
-            table_material,
+            floor_material,
             0 // mass
         );
         floor.position.set(0,-25,0);
@@ -195,7 +204,7 @@
         
         wall1 = new Physijs.BoxMesh(
             room_piece, 
-            table_material,
+            wall_material,
             0 // mass
         );
         wall1.rotation.set((90*Math.PI/180),0,0);
@@ -206,7 +215,7 @@
         
         wall2 = new Physijs.BoxMesh(
             room_piece, 
-            table_material,
+            wall_material,
             0 // mass
         );
         wall2.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
@@ -217,7 +226,7 @@
         
         wall3 = new Physijs.BoxMesh(
             room_piece, 
-            table_material,
+            wall_material,
             0 // mass
         );
         wall3.rotation.set((90*Math.PI/180),0,(90*Math.PI/180));
