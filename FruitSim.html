@@ -34,7 +34,6 @@
     var lights = {};
     var camera;
 
-    var blocks = [];
     var floor, wall1, wall2, wall3;
     var table, melon, bulb, hammer;
     var allFruits = [];
@@ -77,14 +76,14 @@
             function() {
                 if ( selected_obj !== null ) {
 
-                    _v3.copy( mouse_position ).add( block_offset ).sub( selected_obj.position ).multiplyScalar( 5 );
+                    _v3.copy(mouse_position).sub(selected_obj.position).multiplyScalar( 5 );
                     _v3.y = 0;
                     selected_obj.setLinearVelocity( _v3 );
 
-                    _v3.set(0, 0, 0);
-                    for ( _i = 0; _i < blocks.length; _i++ ) {
-                        blocks[_i].applyCentralImpulse( _v3 );
-                    }
+                    /* _v3.set(0, 0, 0);
+                    for ( _i = 0; _i < pickable_objects.length; _i++ ) {
+                        pickable_objects[_i].applyCentralImpulse( _v3 );
+                    } */
                 }
                 scene.simulate( undefined, 1 );
                 physics_stats.update();
@@ -342,6 +341,19 @@
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
+            
+        /* var onKeyDown = function (evt) {
+            switch (evt.keyCode) {
+                case KeyCode.LeftShift:
+                    console.log("test");
+            }
+        };
+        
+        var onKeyUp = function (evt) {
+            switch (evt.keyCode) {
+                
+            }
+        }; */
         
         handleMouseDown = function(evt) {
             var ray, intersection;
@@ -355,19 +367,19 @@
             intersection = ray.intersectObjects(pickable_objects);
             if (intersection.length > 0) {
                 selected_obj = intersection[0].object;
-                    
+
                 _vector.set(0, 0, 0);
                 selected_obj.setAngularFactor(_vector);
                 selected_obj.setAngularVelocity(_vector);
                 selected_obj.setLinearFactor(_vector);
                 selected_obj.setLinearVelocity(_vector);
 
-                //mouse_position.copy(intersection[0].point);
+                mouse_position.copy(intersection[0].point);
                 //block_offset.subVectors(selected_obj.position, mouse_position);
 
-                //intersect_plane.position.y = mouse_position.y;
+                intersect_plane.position.y = mouse_position.y;
                 //container.style.cursor = 'move';
-				}
+			}
         }
         
         handleMouseMove = function(evt) {
@@ -385,6 +397,8 @@
                 
                 intersection = ray.intersectObject(intersect_plane);
                 mouse_position.copy(intersection[0].point);
+                
+                intersect_plane.position.y = mouse_position.y;
             }
         };
 
@@ -402,7 +416,6 @@
             renderer.domElement.addEventListener( 'mousedown', handleMouseDown );
             renderer.domElement.addEventListener( 'mousemove', handleMouseMove );
             renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
-            //renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
         };
     }();
     

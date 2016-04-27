@@ -1,17 +1,14 @@
-Tuesday:
-- Picking always go to a specific X,Z plane (shift/ctrl to go up and down)
+- keyup/keydown eventlistener
+	- Picking always go to a specific X,Z plane (shift/ctrl to go up and down)
+	- Animation and the “usability” of hammer (spacebar to use)
 
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
 (- Textures (lab on moodle) and bump mapping)
 
-- UI: hammer slider power bar
-
 - collision detection (physi.js eventlistener -> collision)
 - Blender Knifing and fragmented models (figure a better way)
 
-Wednesday:
-- Animation and the “usability” of hammer (space bar to use)
 - Fruitsplosion (troubleshooting) [idea: spawn in object INSIDE fruit pieces to explode?]
 - Decals (hammer on table, fruit on table/wall)
 
