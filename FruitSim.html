@@ -9,6 +9,7 @@
 <script type="text/javascript" src="js/three.min.js"></script>
 <script type="text/javascript" src="js/stats.js"></script>
 <script type="text/javascript" src="js/physi.js"></script>
+<script type='text/javascript' src='js/DAT.GUI.min.js'></script>
 
 <script type="text/javascript">
     'use strict';
@@ -20,6 +21,7 @@
     
     var render;
     
+    var gui;
     var spawnFruit, resetAll;
     var createTower;
 
@@ -281,15 +283,16 @@
     initGUI = function() {
 
         gui = new dat.GUI();
-        parameters = {
-            //reset: function() { resetAll() },
+        var parameters = 
+        {
+            reset: function() { resetAll() },
             spawn: function() { spawnFruit() }
         };
-  
-        //gui.add( parameters, 'reset' ).name("Reset to Default Values");
+        gui.add( parameters, 'reset' ).name("Reset to Default Values");
         gui.add( parameters, 'spawn' ).name("Spawn Fruit");
   
         gui.open();
+        
     };
 
     
@@ -300,7 +303,6 @@
         fruitCounter = 0;
         spawnFruit;
     }
-
     
     
     render = function() {
@@ -445,6 +447,7 @@
         initLights();
         initObjects();
         initScene();
+        initGUI();
         initEventHandling();
         requestAnimationFrame(render);
         scene.simulate();
