@@ -270,7 +270,11 @@
             spawn: function() {spawnFruit()},
             reset: function() {resetAll()}
         };
-        power = gui.add(parameters, 'Power').min(0).max(100).step(1).listen();
+        var pow = gui.add(parameters, 'Power').min(1).max(100).step(1).listen();
+        pow.onChange(function(value) {
+            power = value;
+        });
+        
         gui.add(parameters, 'spawn').name("Spawn Fruit");
         gui.add(parameters, 'reset').name("Reset to Default Values");
   
@@ -335,14 +339,19 @@
             hammer.receiveShadow = true;    
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) { 
-                if (String(other_object.name).substring(0, 5) == "fruit") { //if object is fruit. need to add height and power or velocity requirements for hammer
-                    scene.remove(other_object); //replace with spawnPieces function
+                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 60) && (hammer.position.y > 15) ){ 
+                    spawnPieces(other_object);
                 }
             });
             
             scene.add(hammer);
             pickable_objects.push(hammer);
 		});
+    }
+    
+    spawnPieces = function(other_object) {
+        var fruit_location = other_object.position;
+        scene.remove(other_object);
     }
     
     spawnFruit = function() {        
