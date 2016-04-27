@@ -1,20 +1,17 @@
-Monday:
-- Picking always go to a specific X,Z plane
+Tuesday:
+- Picking always go to a specific X,Z plane (shift/ctrl to go up and down)
 
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
 (- Textures (lab on moodle) and bump mapping)
 
-Tuesday:
-UI
-- turn on and off specific features/objectives
-- hammer power bar
+- UI: hammer slider power bar
 
 - collision detection (physi.js eventlistener -> collision)
 - Blender Knifing and fragmented models (figure a better way)
 
 Wednesday:
-- Animation and the “usability” of hammer
+- Animation and the “usability” of hammer (space bar to use)
 - Fruitsplosion (troubleshooting) [idea: spawn in object INSIDE fruit pieces to explode?]
 - Decals (hammer on table, fruit on table/wall)
 
@@ -22,6 +19,9 @@ Thursday:
 - Particle effects (gnats around fruit)
 - better models
 - Animation and the “usability” of other objects
+- turn on and off specific features/objectives
+
+- Bugfixes
 
 Stretch:
 *- Mouse Cursor change (https://github.com/mrdoob/three.js/blob/master/examples/webgl_interactive_draggablecubes.html),(http://stackoverflow.com/questions/4564251/change-the-mouse-pointer-using-javascript)
