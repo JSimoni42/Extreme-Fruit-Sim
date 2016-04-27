@@ -18,16 +18,16 @@
     Physijs.scripts.ammo = 'ammo.js';
 
     var init, initEngine, initLights, initObjects, initScene, initGUI, initEventHandling;
-    
+
     var render;
-    
+
     var gui;
     var power, resetAll;
     var spawnFruit, spawnBulb, spawnHammer, spawnPieces, spawnDecal;
     var createTower;
 
     var model_loader, texture_loader;
-    
+
     var container, renderer, render_stats, physics_stats;
 
     var scene;
@@ -39,18 +39,18 @@
     var allFruits = [];
     var fruitCounter = 0;
     var pickable_objects = [];
-    
+
     var lightX = -20;
     var lightY = 10;
     var lightZ = 0;
-    
+
     var floor_material, wall_material, table_material, hammer_material, melon_material, bulb_material, hammer_material;
 
     var intersect_plane;
     var selected_obj = null;
     var mouse_position = new THREE.Vector3;
     var block_offset = new THREE.Vector3;
-    
+
     var _i;
     var _v3 = new THREE.Vector3;
 
@@ -130,7 +130,7 @@
     initObjects = function() {
         // Loaders
         texture_loader = new THREE.TextureLoader();
-        
+
         floor_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood2.jpg' )}),
             .9, // high friction
@@ -139,7 +139,7 @@
         floor_material.map.wrapS = THREE.RepeatWrapping;
         floor_material.map.wrapT = THREE.RepeatWrapping;
         floor_material.map.repeat.set(3, 3);
-        
+
         // Materials
         wall_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/cinderblock.jpg' )}),
@@ -150,7 +150,7 @@
         wall_material.map.wrapT = THREE.RepeatWrapping;
         wall_material.map.repeat.set(1.5, 1.5);
         //lightMap for bumpmapping
-        
+
         table_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood.jpg' )}),
             .9, // high friction
@@ -177,7 +177,7 @@
         melon_material.map.wrapS = THREE.RepeatWrapping;
         melon_material.map.wrapT = THREE.RepeatWrapping;
         melon_material.map.repeat.set(.5, .5);
-        
+
         bulb_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/bulb.jpg' ), opacity: .75, transparent: true, emissive: 0xFFFFFF}),
           .4, // medium friction
@@ -190,20 +190,20 @@
 
     initScene = function() {
         model_loader = new THREE.JSONLoader();
-        
+
         var room_piece = new THREE.BoxGeometry(100, 1, 100);
-        
+
         floor = new Physijs.BoxMesh(
-            room_piece, 
+            room_piece,
             floor_material,
             0 // mass
         );
         floor.position.set(0,-25,0);
         floor.receiveShadow = true;
         scene.add(floor);
-        
+
         wall1 = new Physijs.BoxMesh(
-            room_piece, 
+            room_piece,
             wall_material,
             0 // mass
         );
@@ -212,9 +212,9 @@
         wall1.castShadow = true;
         wall1.receiveShadow = true;
         scene.add(wall1);
-        
+
         wall2 = new Physijs.BoxMesh(
-            room_piece, 
+            room_piece,
             wall_material,
             0 // mass
         );
@@ -223,9 +223,9 @@
         wall2.castShadow = true;
         wall2.receiveShadow = true;
         scene.add(wall2);
-        
+
         wall3 = new Physijs.BoxMesh(
-            room_piece, 
+            room_piece,
             wall_material,
             0 // mass
         );
@@ -234,7 +234,7 @@
         wall3.castShadow = true;
         wall3.receiveShadow = true;
         scene.add(wall3);
-        
+
         model_loader.load("models/table.json",
         function(geometry, materials){
             table = new Physijs.ConvexMesh(
@@ -247,7 +247,7 @@
             table.receiveShadow = true;
             scene.add(table);
 		});
-        
+
         spawnBulb();
         spawnHammer();
         spawnFruit();
@@ -259,12 +259,12 @@
         intersect_plane.rotation.x = Math.PI / -2;
         scene.add(intersect_plane);
     };
-    
+
 
     initGUI = function() {
 
         gui = new dat.GUI();
-        var parameters = 
+        var parameters =
         {
             Power: 50,
             spawn: function() {spawnFruit()},
@@ -273,28 +273,31 @@
         power = gui.add(parameters, 'Power').min(0).max(100).step(1).listen();
         gui.add(parameters, 'spawn').name("Spawn Fruit");
         gui.add(parameters, 'reset').name("Reset to Default Values");
-  
+
         gui.open();
-        
+
     };
-    
+
     resetAll = function() {
         for (var i = 0; i < allFruits.length; i++) {
             scene.remove(allFruits[i]);
         }
         allFruits = [];
         fruitCounter = 0;
-        
+
         scene.remove(hammer);
         scene.remove(bulb);
         pickable_objects = [];
-        
+
         spawnHammer();
         spawnBulb();
         spawnFruit();
     }
-    
+
     render = function() {
+        if (lights.point_light && bulb) {
+          lights.point_light.position.set(bulb.position.x, bulb.position.y+5, bulb.position.z);
+        }
         requestAnimationFrame(render);
         renderer.render(scene, camera);
         render_stats.update();
@@ -313,13 +316,13 @@
             //bulb.castShadow = true;
             scene.add(bulb);
             pickable_objects.push(bulb);
-            
+
             var constraint = new Physijs.HingeConstraint( bulb, new THREE.Vector3(-20,30,0), new THREE.Vector3(0,0,1) );
             scene.addConstraint(constraint);
             constraint.setLimits( -10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
             });
     }
-    
+
     spawnHammer = function() {
         model_loader.load("models/hammer.json",
         function(geometry, materials){
@@ -332,20 +335,20 @@
             hammer.position.set(-15,.1,10);
             hammer.rotation.set(0,(-90*Math.PI/180),0);
             hammer.castShadow = true;
-            hammer.receiveShadow = true;    
+            hammer.receiveShadow = true;
 
-            hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) { 
+            hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
                 if (String(other_object.name).substring(0, 5) == "fruit") { //if object is fruit. need to add height and power or velocity requirements for hammer
                     scene.remove(other_object); //replace with spawnPieces function
                 }
             });
-            
+
             scene.add(hammer);
             pickable_objects.push(hammer);
 		});
     }
-    
-    spawnFruit = function() {        
+
+    spawnFruit = function() {
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
             allFruits[fruitCounter] = new Physijs.ConvexMesh(
@@ -362,24 +365,24 @@
             fruitCounter += 1;
 		});
     };
-    
+
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
-            
+
         /* var onKeyDown = function (evt) {
             switch (evt.keyCode) {
                 case KeyCode.LeftShift:
                     console.log("test");
             }
         };
-        
+
         var onKeyUp = function (evt) {
             switch (evt.keyCode) {
-                
+
             }
         }; */
-        
+
         handleMouseDown = function(evt) {
             var ray, intersection;
             _vector.set(
@@ -406,7 +409,7 @@
                 //container.style.cursor = 'move';
 			}
         }
-        
+
         handleMouseMove = function(evt) {
             var ray, intersection,
                 i, scalar;
@@ -419,10 +422,10 @@
                 );
                 _vector.unproject(camera);
                 ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
-                
+
                 intersection = ray.intersectObject(intersect_plane);
                 mouse_position.copy(intersection[0].point);
-                
+
                 intersect_plane.position.y = mouse_position.y;
             }
         };
@@ -436,14 +439,14 @@
 				selected_obj = null;
             }
         };
-        
+
         return function() {
             renderer.domElement.addEventListener( 'mousedown', handleMouseDown );
             renderer.domElement.addEventListener( 'mousemove', handleMouseMove );
             renderer.domElement.addEventListener( 'mouseup', handleMouseUp );
         };
     }();
-    
+
     init = function() {
         initEngine();
         initLights();
@@ -454,7 +457,7 @@
         requestAnimationFrame(render);
         scene.simulate();
     };
-    
+
 
 window.onload = init;
 </script>
