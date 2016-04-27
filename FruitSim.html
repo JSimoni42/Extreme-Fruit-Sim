@@ -74,20 +74,17 @@
         scene.addEventListener(
             'update',
             function() {
-
                 if ( selected_obj !== null ) {
 
                     _v3.copy( mouse_position ).add( block_offset ).sub( selected_obj.position ).multiplyScalar( 5 );
                     _v3.y = 0;
                     selected_obj.setLinearVelocity( _v3 );
 
-                    // Reactivate all of the blocks
                     _v3.set(0, 0, 0);
                     for ( _i = 0; _i < blocks.length; _i++ ) {
                         blocks[_i].applyCentralImpulse( _v3 );
                     }
                 }
-
                 scene.simulate( undefined, 1 );
                 physics_stats.update();
             }
