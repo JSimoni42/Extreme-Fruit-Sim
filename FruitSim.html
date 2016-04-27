@@ -40,9 +40,9 @@
     var fruitCounter = 0;
     var pickable_objects = [];
     
-    var lightX = 20;
-    var lightY = 35;
-    var lightZ = -5;
+    var lightX = -20;
+    var lightY = 10;
+    var lightZ = 0;
     
     var floor_material, wall_material, table_material, hammer_material, melon_material, bulb_material, hammer_material;
 
@@ -112,7 +112,7 @@
 
         // directional light
         lights.point_light = new THREE.PointLight( 0xFFFFFF );
-        lights.point_light.position.set(lightX, lightY, lightZ);
+        lights.point_light.position.set(lightX, (lightY + 5), lightZ);
         //lights.dir_light.target.position.copy(scene.position);
         lights.point_light.castShadow = true;
         lights.point_light.shadowCameraLeft = -30;
@@ -179,7 +179,7 @@
         melon_material.map.repeat.set(.5, .5);
         
         bulb_material = Physijs.createMaterial(
-          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/bulb.jpg' )}),
+          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/bulb.jpg' ), opacity: .75, transparent: true, emissive: 0xFFFFFF}),
           .4, // medium friction
           .4 // medium restitution
         );
@@ -307,13 +307,17 @@
                 geometry,
                 bulb_material,
                 2, //mass
-                {retitution: 0.2, friction: 0.8}
+                {retitution: 0.2, friction: 0.8, opacity: 0, transparent: true}
             );
-            bulb.position.set(-10,0,0);
-            bulb.castShadow = true;
+            bulb.position.set(lightX, lightY, lightZ);
+            //bulb.castShadow = true;
             scene.add(bulb);
             pickable_objects.push(bulb);
-		});
+            
+            var constraint = new Physijs.HingeConstraint( bulb, new THREE.Vector3(-20,30,0), new THREE.Vector3(0,0,1) );
+            scene.addConstraint(constraint);
+            constraint.setLimits( -10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
+            });
     }
     
     spawnHammer = function() {
