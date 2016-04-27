@@ -357,34 +357,6 @@
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
-
-/*      handleMouseDown = function(evt) {
-            var ray, intersections;
-			_vector.set(
-                (evt.clientX / window.innerWidth) * 2 - 1,
-                -(evt.clientY / window.innerHeight) * 2 + 1,
-                1
-            );
-            _vector.unproject(camera);
-            ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
-            intersections = ray.intersectObjects(blocks);
-
-            if (intersections.length > 0) {
-                console.log(intersections);
-                selected_obj = intersections[0].object;
-
-                _vector.set(0, 0, 0);
-                selected_obj.setAngularFactor(_vector);
-                selected_obj.setAngularVelocity(_vector);
-                selected_obj.setLinearFactor(_vector);
-                selected_obj.setLinearVelocity(_vector);
-
-                mouse_position.copy( intersections[0].point );
-                block_offset.subVectors( selected_obj.position, mouse_position );
-
-                intersect_plane.position.y = mouse_position.y;
-            }
-        };*/
         
         handleMouseDown = function(evt) {
 			//ray.setFromCamera(mouse, camera);
@@ -396,17 +368,21 @@
             );
             _vector.unproject(camera);
             ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
-				intersections = ray.intersectObjects(pickable_objects);
-				if (intersections.length > 0) {
-					//controls.enabled = false;
-					selected_obj = intersections[ 0 ].object;
-					//var intersections = ray.intersectObject( plane );
-					if (intersections.length > 0) {
-						mouse_position.copy( intersections[0].point );
-                        block_offset.subVectors( selected_obj.position, mouse_position );
-                        intersect_plane.position.y = mouse_position.y;
-					}
-					//container.style.cursor = 'move';
+                intersections = ray.intersectObjects(pickable_objects);
+                if (intersections.length > 0) {
+                    selected_obj = intersections[ 0 ].object;
+                    
+                    _vector.set(0, 0, 0);
+                    selected_obj.setAngularFactor(_vector);
+                    selected_obj.setAngularVelocity(_vector);
+                    selected_obj.setLinearFactor(_vector);
+                    selected_obj.setLinearVelocity(_vector);
+                    
+                    mouse_position.copy( intersections[0].point );
+                    block_offset.subVectors( selected_obj.position, mouse_position );
+                    
+                    intersect_plane.position.y = mouse_position.y;
+                    //container.style.cursor = 'move';
 				}
         }
         
