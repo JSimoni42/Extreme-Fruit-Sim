@@ -22,7 +22,7 @@
     var render;
     
     var gui;
-    var spawnFruit, resetAll;
+    var spawnFruit, spawnBulb, spawnHammer, resetAll;
     var createTower;
 
     var model_loader, texture_loader;
@@ -238,38 +238,9 @@
             scene.add(table);
 		});
         
-        model_loader.load("models/lightbulb.json",
-        function(geometry, materials){
-            bulb = new Physijs.ConvexMesh(
-                geometry,
-                bulb_material,
-                2, //mass
-                {retitution: 0.2, friction: 0.8}
-            );
-            bulb.position.set(-10,0,0);
-            bulb.castShadow = true;
-            scene.add(bulb);
-            pickable_objects.push(bulb);
-		});
-        
-        model_loader.load("models/hammer.json",
-        function(geometry, materials){
-            hammer = new Physijs.ConvexMesh(
-                geometry,
-                hammer_material,
-                15, //mass
-                {retitution: 0.2, friction: 0.8}
-            );
-            hammer.position.set(-10,0,10);
-            hammer.rotation.set(0,-90,0);
-            hammer.castShadow = true;
-            hammer.receiveShadow = true;            
-            scene.add(hammer);
-            pickable_objects.push(hammer);
-		});
-        
+        spawnBulb();
+        spawnHammer();
         spawnFruit(); //spawns a fruit object in the center of the table
-        createTower(); //creates the jenga tower from the physi.js example
 
         intersect_plane = new THREE.Mesh(
             new THREE.PlaneGeometry( 150, 150 ),
@@ -294,16 +265,21 @@
         gui.open();
         
     };
-
     
     resetAll = function() {
         for (var i = 0; i < allFruits.length; i++) {
             scene.remove(allFruits[i]);
         }
+        allFruits = [];
         fruitCounter = 0;
-        spawnFruit;
+        
+        scene.remove(hammer);
+        scene.remove(bulb);
+        spawnHammer();
+        spawnBulb();
+        spawnFruit();
+        
     }
-    
     
     render = function() {
         requestAnimationFrame(render);
@@ -311,6 +287,40 @@
         render_stats.update();
     };
 
+    spawnBulb = function() {
+        model_loader.load("models/lightbulb.json",
+        function(geometry, materials){
+            bulb = new Physijs.ConvexMesh(
+                geometry,
+                bulb_material,
+                2, //mass
+                {retitution: 0.2, friction: 0.8}
+            );
+            bulb.position.set(-10,0,0);
+            bulb.castShadow = true;
+            scene.add(bulb);
+            pickable_objects.push(bulb);
+		});
+    }
+    
+    spawnHammer = function() {
+        model_loader.load("models/hammer.json",
+        function(geometry, materials){
+            hammer = new Physijs.ConvexMesh(
+                geometry,
+                hammer_material,
+                15, //mass
+                {retitution: 0.2, friction: 0.8}
+            );
+            hammer.position.set(-10,0,10);
+            hammer.rotation.set(0,-90,0);
+            hammer.castShadow = true;
+            hammer.receiveShadow = true;            
+            scene.add(hammer);
+            pickable_objects.push(hammer);
+		});
+    }
+    
     spawnFruit = function() {        
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
@@ -327,32 +337,6 @@
             fruitCounter += 1;
 		});
     };
-
-    createTower = function() {
-        var block_length = 6, block_height = 1, block_width = 1.5, block_offset = 2,
-            block_geometry = new THREE.BoxGeometry( block_length, block_height, block_width );
-        return function() {
-            var i, j, rows = 16,
-                block;
-            for ( i = 0; i < rows; i++ ) {
-                for ( j = 0; j < 3; j++ ) {
-                    block = new Physijs.BoxMesh( block_geometry, block_material );
-                    block.position.y = (block_height / 2) + block_height * i;
-                    if ( i % 2 === 0 ) {
-                        block.rotation.y = Math.PI / 2.01; // #TODO: There's a bug somewhere when this is to close to 2
-                        block.position.x = block_offset * j - ( block_offset * 3 / 2 - block_offset / 2 );
-                    } else {
-                        block.position.z = block_offset * j - ( block_offset * 3 / 2 - block_offset / 2 );
-                    }
-                    block.receiveShadow = true;
-                    block.castShadow = true;
-                    scene.add(block);
-                    pickable_objects.push(block);
-                    blocks.push(block);
-                }
-            }
-        }
-    }();
     
     initEventHandling = function() {
         var _vector = new THREE.Vector3,

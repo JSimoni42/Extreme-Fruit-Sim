@@ -1,6 +1,5 @@
 Monday:
 - Picking always go to a specific X,Z plane
-- Picking keeps objects still (currently spinning with whatever hits them like in spacestation)
 
 - hook up lightbulb to hinge (hanging above window view)
 - hook lighting up to lightbulb
@@ -8,8 +7,6 @@ Monday:
 
 Tuesday:
 UI
-- Spawning
-- Reset
 - turn on and off specific features/objectives
 - hammer power bar
 
