@@ -39,6 +39,7 @@
     var allFruits = [];
     var fruitCounter = 0;
     var pickable_objects = [];
+    var fruit_pieces = [];
 
     var lightX = -20;
     var lightY = 10;
@@ -274,7 +275,7 @@
         pow.onChange(function(value) {
             power = value;
         });
-        
+
         gui.add(parameters, 'spawn').name("Spawn Fruit");
         gui.add(parameters, 'reset').name("Reset to Default Values");
 
@@ -342,10 +343,10 @@
             hammer.receiveShadow = true;
 
 
-            hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) { 
-                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 60) && (hammer.position.y > 15) ){ 
+            hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 60) ){//&& (hammer.position.y > 15) ){
+                    console.log("collision!");
                     spawnPieces(other_object);
-
                 }
             });
 
@@ -353,13 +354,27 @@
             pickable_objects.push(hammer);
 		});
     }
-    
+
     spawnPieces = function(other_object) {
-        var fruit_location = other_object.position;
+        var flx = other_object.position.x;
+        var fly = other_object.position.y;
+        var flz = other_object.position.z;
+        var fruit_piece;
         scene.remove(other_object);
+        var dir_root = "models/watermelon-knifed-"
+        for (var i = 0; i <= 7; i++){
+          console.log("adding: " + dir_root + i + ".json");
+          model_loader.load(dir_root + i + ".json",
+          function(geometry, materials){
+              fruit_pieces.unshift(new Physijs.ConvexMesh(geometry, melon_material, 3));
+              fruit_pieces[0].position.set(flx, fly, flz);
+              scene.add(fruit_pieces[0]);
+              pickable_objects.push(fruit_pieces[0]);
+          });
+        }
     }
-    
-    spawnFruit = function() {        
+
+    spawnFruit = function() {
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
             allFruits[fruitCounter] = new Physijs.ConvexMesh(
