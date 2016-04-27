@@ -40,6 +40,10 @@
     var fruitCounter = 0;
     var pickable_objects = [];
     
+    var lightX = 20;
+    var lightY = 35;
+    var lightZ = -5;
+    
     var table_material, block_material, melon_material, bulb_material, hammer_material;
 
     var intersect_plane;
@@ -107,20 +111,21 @@
         scene.add(lights.am_light);
 
         // directional light
-        lights.dir_light = new THREE.DirectionalLight( 0xFFFFFF );
-        lights.dir_light.position.set(20, 35, -5);
-        lights.dir_light.target.position.copy(scene.position);
-        lights.dir_light.castShadow = true;
-        lights.dir_light.shadowCameraLeft = -30;
-        lights.dir_light.shadowCameraTop = -30;
-        lights.dir_light.shadowCameraRight = 30;
-        lights.dir_light.shadowCameraBottom = 30;
-        lights.dir_light.shadowCameraNear = 20;
-        lights.dir_light.shadowCameraFar = 200;
-        lights.dir_light.shadowBias = -.001
-        lights.dir_light.shadowMapWidth = lights.dir_light.shadowMapHeight = 2048;
-        lights.dir_light.shadowDarkness = .5;
-        scene.add(lights.dir_light);
+        lights.point_light = new THREE.PointLight( 0xFFFFFF );
+        lights.point_light.position.set(lightX, lightY, lightZ);
+        console.log(lights.point_light.position);
+        //lights.dir_light.target.position.copy(scene.position);
+        lights.point_light.castShadow = true;
+        lights.point_light.shadowCameraLeft = -30;
+        lights.point_light.shadowCameraTop = -30;
+        lights.point_light.shadowCameraRight = 30;
+        lights.point_light.shadowCameraBottom = 30;
+        lights.point_light.shadowCameraNear = 20;
+        lights.point_light.shadowCameraFar = 200;
+        lights.point_light.shadowBias = -.001
+        lights.point_light.shadowMapWidth = lights.point_light.shadowMapHeight = 2048;
+        lights.point_light.shadowDarkness = .5;
+        scene.add(lights.point_light);
     };
 
     initObjects = function() {
