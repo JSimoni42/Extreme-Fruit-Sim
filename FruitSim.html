@@ -44,6 +44,9 @@
     var lightY = 35;
     var lightZ = -5;
     
+    var hammer_collision;
+    var fruit_collision = [];
+    
     var table_material, block_material, melon_material, bulb_material, hammer_material;
 
     var intersect_plane;
@@ -113,7 +116,6 @@
         // directional light
         lights.point_light = new THREE.PointLight( 0xFFFFFF );
         lights.point_light.position.set(lightX, lightY, lightZ);
-        console.log(lights.point_light.position);
         //lights.dir_light.target.position.copy(scene.position);
         lights.point_light.castShadow = true;
         lights.point_light.shadowCameraLeft = -30;
@@ -320,7 +322,14 @@
             hammer.position.set(-15,.1,10);
             hammer.rotation.set(0,(-90*Math.PI/180),0);
             hammer.castShadow = true;
-            hammer.receiveShadow = true;            
+            hammer.receiveShadow = true;    
+
+            hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) { 
+                if (String(other_object.name).substring(0, 5) == "fruit") {
+                    scene.remove(other_object);
+                }
+            });
+            
             scene.add(hammer);
             pickable_objects.push(hammer);
 		});
@@ -334,6 +343,7 @@
                 melon_material,
                 20 //mass
             );
+            allFruits[fruitCounter].name = "fruit" + String(fruitCounter);
             allFruits[fruitCounter].position.set(2,0,0);
             allFruits[fruitCounter].castShadow = true;
             allFruits[fruitCounter].receiveShadow = true;
