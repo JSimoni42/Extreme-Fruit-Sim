@@ -62,16 +62,16 @@
         render_stats.domElement.style.position = 'absolute';
         render_stats.domElement.style.top = '1px';
         render_stats.domElement.style.zIndex = 100;
-        document.getElementById( 'viewport' ).appendChild( render_stats.domElement );
+        document.getElementById('viewport').appendChild(render_stats.domElement);
 
         physics_stats = new Stats();
         physics_stats.domElement.style.position = 'absolute';
         physics_stats.domElement.style.top = '50px';
         physics_stats.domElement.style.zIndex = 100;
-        document.getElementById( 'viewport' ).appendChild( physics_stats.domElement );
+        document.getElementById('viewport').appendChild(physics_stats.domElement);
 
-        scene = new Physijs.Scene({ fixedTimeStep: 1 / 120 });
-        scene.setGravity(new THREE.Vector3( 0, -30, 0 ));
+        scene = new Physijs.Scene({fixedTimeStep: 1 / 120});
+        scene.setGravity(new THREE.Vector3( 0, -150, 0 ));
         scene.addEventListener(
             'update',
             function() {
@@ -255,12 +255,12 @@
         var parameters = 
         {
             Power: 50,
-            spawn: function() { spawnFruit() },
-            reset: function() { resetAll() }
+            spawn: function() {spawnFruit()},
+            reset: function() {resetAll()}
         };
-        power = gui.add( parameters, 'Power' ).min(0).max(100).step(1).listen();
-        gui.add( parameters, 'spawn' ).name("Spawn Fruit");
-        gui.add( parameters, 'reset' ).name("Reset to Default Values");
+        power = gui.add(parameters, 'Power').min(0).max(100).step(1).listen();
+        gui.add(parameters, 'spawn').name("Spawn Fruit");
+        gui.add(parameters, 'reset').name("Reset to Default Values");
   
         gui.open();
         
@@ -344,7 +344,7 @@
             handleMouseDown, handleMouseMove, handleMouseUp;
         
         handleMouseDown = function(evt) {
-            var ray, intersections;
+            var ray, intersection;
             _vector.set(
                 (evt.clientX / window.innerWidth) * 2 - 1,
                 -(evt.clientY / window.innerHeight) * 2 + 1,
@@ -352,9 +352,9 @@
             );
             _vector.unproject(camera);
             ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
-            intersections = ray.intersectObjects(pickable_objects);
-            if (intersections.length > 0) {
-                selected_obj = intersections[0].object;
+            intersection = ray.intersectObjects(pickable_objects);
+            if (intersection.length > 0) {
+                selected_obj = intersection[0].object;
                     
                 _vector.set(0, 0, 0);
                 selected_obj.setAngularFactor(_vector);
@@ -362,10 +362,10 @@
                 selected_obj.setLinearFactor(_vector);
                 selected_obj.setLinearVelocity(_vector);
 
-                mouse_position.copy(intersections[0].point);
-                block_offset.subVectors(selected_obj.position, mouse_position);
-                    
-                intersect_plane.position.y = mouse_position.y;
+                //mouse_position.copy(intersection[0].point);
+                //block_offset.subVectors(selected_obj.position, mouse_position);
+
+                //intersect_plane.position.y = mouse_position.y;
                 //container.style.cursor = 'move';
 				}
         }
@@ -382,6 +382,7 @@
                 );
                 _vector.unproject(camera);
                 ray = new THREE.Raycaster(camera.position, _vector.sub(camera.position).normalize());
+                
                 intersection = ray.intersectObject(intersect_plane);
                 mouse_position.copy(intersection[0].point);
             }
