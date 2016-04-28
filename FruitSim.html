@@ -339,9 +339,9 @@
             scene.add(bulb);
             pickable_objects.push(bulb);
 
-            var constraint = new Physijs.HingeConstraint( bulb, new THREE.Vector3(lightX, (lightY + 25), lightZ), new THREE.Vector3(0,0,1) );
+            var constraint = new Physijs.HingeConstraint(bulb, new THREE.Vector3(lightX, (lightY + 25), lightZ), new THREE.Vector3(1,0,1));
             scene.addConstraint(constraint);
-            constraint.setLimits(-10 * (Math.PI/180), 10 * (Math.PI/180), 1, 1.0);
+            constraint.setLimits(-10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
             });
     }
 
