@@ -23,7 +23,8 @@
     var render;
 
     var gui;
-    var power, resetAll;
+    var power = 50;
+    var resetAll;
     var spawnFruit, spawnBulb, spawnHammer, spawnPieces, spawnDecal;
     var createTower;
 
@@ -373,7 +374,10 @@
 
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 60) ){//&& (hammer.position.y > 15) ){
+                console.log(String(other_object.name).substring(0, 5));
+                console.log(String(power));
+                console.log(String(hammer.position.y) + " + " + String(other_object.position.y));
+                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 75) && (hammer.position.y > 8 ) ){
                     console.log("collision!");
                     spawnPieces(other_object);
                 }
