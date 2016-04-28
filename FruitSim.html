@@ -41,7 +41,13 @@
     var fruitCounter = 0;
     var pickable_objects = [];
     var fruit_pieces = [];
+    
     var decals = [];
+    var meshToIntersect;
+    var position = new THREE.Vector3( 0, 0, 0 );
+    var direction = new THREE.Vector3( 0, 0, 0 );
+    var dimensions = new THREE.Vector3( 10, 10, 10 );
+    var check = new THREE.Vector3( 1, 1, 1 );
 
     var camX = 0;
     var camY = 50;
@@ -404,18 +410,10 @@
 
     spawnDecal = function(object, type) { //object is the object that hit the other object, either the fruit piece or the hammer. type is "fruit" or "hammer"
         console.log("We have collision with object of type " + type + " at position " + String(object.position.x) + String(object.position.y) + String(object.position.z));
-        /*
-        var decalGeometry = new THREE.DecalGeometry(  
-            var meshToIntersect, // it has to be a THREE.Mesh
-            var position, // THREE.Vector3 in world coordinates  
-            var direction, // THREE.Vector3 specifying the orientation of the decal  
-            var dimensions, // THREE.Vector3 specifying the size of the decal box  
-            var check // THREE.Vector3 specifying what sides to clip (1-clip, 0-noclip)  
-        );
-        
-        var decal = new THREE.Mesh( decalGeometry, decalMaterial );
-        
-        var decalMaterial = new THREE.MeshNormalMaterial( {
+
+        texture_loader = new THREE.TextureLoader();
+        var decalMaterial = new THREE.MeshLambertMaterial( {
+            map: texture_loader.load('images/SplatterRound0057_S.jpg'),
             transparent: true, 
             depthTest: true,
             depthWrite: false,
@@ -423,9 +421,23 @@
             polygonOffsetFactor: -4,
         });
         
+        meshToIntersect = new THREE.Mesh()
+        
+        position = (object.position);
+        
+        var decalGeometry = new THREE.DecalGeometry(  
+            meshToIntersect = new THREE.Mesh(),
+            position, // THREE.Vector3 in world coordinates  
+            direction, // THREE.Vector3 specifying the orientation of the decal  
+            dimensions, // THREE.Vector3 specifying the size of the decal box  
+            check // THREE.Vector3 specifying what sides to clip (1-clip, 0-noclip)  
+        );
+        
+        var decal = new THREE.Mesh( decalGeometry, decalMaterial );
+        
         decals.push(decal);
         scene.add(decal);
-        */
+
     }
     
     
