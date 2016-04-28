@@ -3,6 +3,11 @@
 3) git commit -m "Message Here"
 4) git push origin master
 
+Branching:
+git checkout -b "branchname"
+git push origin "branchname"
+git checkout master
+git push origin master
 
 ?) git status
 ?) git clone (HTTPS link from github)
