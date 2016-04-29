@@ -572,12 +572,12 @@
 
     function keydown(ev) {
         switch (ev.keyCode) {
-            case 80: //P key
+            case 16: //shift
                 selected_obj.position.y = selected_obj.position.y + 5
                 selected_obj.__dirtyPosition = true;
                 break;
    
-            case 39: //right arrow key
+            case 32: //space
                 while (selected_obj.position.y > 0) {
                     selected_obj.position.y = selected_obj.position.y - 1
                     selected_obj.__dirtyPosition = true;
