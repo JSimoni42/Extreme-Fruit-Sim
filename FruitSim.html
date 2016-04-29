@@ -395,7 +395,6 @@
             hammer.castShadow = true;
             hammer.receiveShadow = true;
 
-
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
                 if ( (other_object.name.substring(0, 5) == "fruit") && (power > 75) && (relative_velocity.y < -1) ){
                     spawnPieces(other_object);
@@ -413,29 +412,24 @@
     }
 
     spawnPieces = function(other_object) {
+        scene.remove(other_object);
+        for(var i = 0; i <= pickable_objects.length; i++){
+            if(pickable_objects[i] == other_object) {
+                pickable_objects.splice(i,1);
+            }
+        }
         var flx = other_object.position.x;
         var fly = other_object.position.y;
         var flz = other_object.position.z;
         var fruit_piece;
-        scene.remove(other_object);
-        var dir_root = "models/watermelon-knifed-"
-        for (var i = 0; i <= 7; i++){
-            console.log("adding: " + dir_root + i + ".json");
-            model_loader.load(dir_root + i + ".json",
-            function(geometry, materials){
-                fruit_pieces.unshift(new Physijs.ConvexMesh(geometry, melon_material, 3));
-                fruit_pieces[0].position.set(flx, fly, flz);
-                
-                fruit_pieces[0].addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                    spawnDecal(fruit_pieces[0], "fruit");
-                });
-                
-                scene.add(fruit_pieces[0]);
-                pickable_objects.push(fruit_pieces[0]);
-            });
-        }
+        var dir_root = "models/piece"
+        for (var i = 1; i <= 7; i++){
+            fruit_pieces[i].position.set(flx, fly, flz);
+            scene.add(fruit_pieces[i]);
+            pickable_objects.push(fruit_pieces[i]);
+        };
     }
-
+    
     /*
     spawnDecal = function(object, type) { //object is the object that hit the other object, either the fruit piece or the hammer. type is "fruit" or "hammer"
         console.log("We have collision with object of type " + type + " at position " + String(object.position.x) + String(object.position.y) + String(object.position.z));
@@ -485,6 +479,21 @@
             scene.add(allFruits[fruitCounter]);
             pickable_objects.push(allFruits[fruitCounter]);
             fruitCounter += 1;
+            
+            var fruit_piece;
+            var dir_root = "models/piece"
+            for (var i = 1; i <= 7; i++){
+                console.log("adding: " + dir_root + i + ".json");
+                model_loader.load(dir_root + i + ".json",
+                function(geometry, materials){
+                    fruit_pieces.unshift(new Physijs.ConvexMesh(geometry, melon_material, 3));
+                
+                    fruit_pieces[0].addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+                        spawnDecal(fruit_pieces[0], "fruit");
+                    });
+                });
+            }
+            
 		});
     };
 
