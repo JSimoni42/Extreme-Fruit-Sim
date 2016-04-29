@@ -34,6 +34,7 @@
 
     var scene;
     var lights = {};
+    var lighton = true;
     var camera;
 
     var floor, ceiling, wall1, wall2, wall3, wall4;
@@ -316,7 +317,7 @@
         {
             Power: 50,
             spawn: function() {spawnFruit()},
-            reset: function() {resetAll()}
+            reset: function() {resetAll()},
         };
         var pow = gui.add(parameters, 'Power').min(1).max(100).step(1).listen();
         pow.onChange(function(value) {
@@ -404,6 +405,7 @@
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
                 if (((other_object.name.substring(0, 5) == "fruit") && (power > 75)) && (((relative_velocity.y < -50) && (selected_obj != hammer)) || (hammer_hitting))){
+                    console.log("here");
                     spawnPieces(other_object);
                 }
                 else if ( (other_object.name == "table") && (relative_velocity.y < -1) ){ //less than 0 when hammer is moving down
@@ -472,32 +474,31 @@
     }
 */
 
-spawnGnats = function(obj) {
-    var particleCount = Math.random() * 5;
-    var particles = new THREE.Geometry();
-    var pMaterial = new THREE.PointsMaterial({
-      color:0x302005,
-      size:0.75
-    });
-    var pX, pY, pZ, particle;
-    for (var p = 0; p < particleCount; p++) {
-      pX = Math.random() * 2;
-      pY = Math.random() * 2;
-      pZ = Math.random() * 2;
-      particle = new THREE.Vector3(pX, pY, pZ);
-      particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
-      particles.vertices.push(particle);
+    spawnGnats = function(obj) {
+        var particleCount = Math.random() * 5;
+        var particles = new THREE.Geometry();
+        var pMaterial = new THREE.PointsMaterial({
+          color:0x302005,
+          size:0.75
+        });
+        var pX, pY, pZ, particle;
+        for (var p = 0; p < particleCount; p++) {
+          pX = Math.random() * 2;
+          pY = Math.random() * 2;
+          pZ = Math.random() * 2;
+          particle = new THREE.Vector3(pX, pY, pZ);
+          particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
+          particles.vertices.push(particle);
+        }
+        var particleSystem = new THREE.Points(particles, pMaterial);
+        particleSystem.sortParticles = true;
+        obj.add(particleSystem);
+        particleSystem.position.set(0, 12, 0);
+        gnats.push(particleSystem);
     }
-    var particleSystem = new THREE.Points(particles, pMaterial);
-    particleSystem.sortParticles = true;
-    obj.add(particleSystem);
-    particleSystem.position.set(0, 15, 0);
-    gnats.push(particleSystem);
-}
-
 
     spawnFruit = function() {
-        model_loader.load("models/watermelon.json",
+        model_loader.load("models/melon.json",
         function(geometry, materials){
             allFruits[fruitCounter] = new Physijs.ConvexMesh(
                 geometry,
@@ -525,7 +526,6 @@ spawnGnats = function(obj) {
                     });
                 });
             }
-
 		});
     };
 
@@ -602,6 +602,9 @@ spawnGnats = function(obj) {
     function keydown(ev) {
         switch (ev.keyCode) {
             case 16: //shift
+                if((selected_obj.position.y) >= 30){
+                    break;
+                }
                 if(selected_obj == hammer){
                     hammer.rotation.set((-45*Math.PI/180),0,(-90*Math.PI/180));
                     selected_obj.__dirtyRotation = true;
@@ -609,15 +612,25 @@ spawnGnats = function(obj) {
                 selected_obj.position.y = selected_obj.position.y + 5
                 selected_obj.__dirtyPosition = true;
                 break;
-
-            case 32: //space
+                
+            case 32: //space                
                 hammer_hitting = true;
                 hammer.rotation.set((90*Math.PI/180),(90*Math.PI/180),(0*Math.PI/180));
                 selected_obj.__dirtyRotation = true;
                 selected_obj.position.y = 2;
                 selected_obj.__dirtyPosition = true;
                 break;
-
+                
+            case 76: //'L'
+                if (lighton){
+                    scene.remove(lights.point_light);
+                    lighton = false;
+                }
+                else{
+                    scene.add(lights.point_light);
+                    lighton = true;
+                }
+                
             default:
                 return;
         }
@@ -637,8 +650,7 @@ spawnGnats = function(obj) {
         document.onkeydown = function(ev){
             keydown(ev);
         };
-    };
-
+    };    
 
 window.onload = init;
 </script>
