@@ -402,8 +402,8 @@
                 }
                 else if ( (other_object.name == "table") && (relative_velocity.y < -1) ){ //less than 0 when hammer is moving down
                     spawnDecal(hammer, "hammer");
-                    bulb.position.set(lightX, lightY+1, lightZ); //isn't moving light
-                    requestAnimationFrame(render);
+                    bulb.position.x = bulb.position.x + 1;
+                    bulb.__dirtyPosition = true;
                 }
             });
 
@@ -574,6 +574,15 @@
         switch (ev.keyCode) {
             case 80: //P key
                 selected_obj.position.y = selected_obj.position.y + 5
+                selected_obj.__dirtyPosition = true;
+                break;
+   
+            case 39: //right arrow key
+                while (selected_obj.position.y > 0) {
+                    selected_obj.position.y = selected_obj.position.y - 1
+                    selected_obj.__dirtyPosition = true;
+                    requestAnimationFrame(render);
+                }
                 break;
    
             default: 
