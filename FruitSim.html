@@ -352,10 +352,25 @@
             bulb.position.set(lightX, lightY, lightZ);
             scene.add(bulb);
             pickable_objects.push(bulb);
-
+            
+            /* hinge constraint
+            
             var constraint = new Physijs.HingeConstraint(bulb, new THREE.Vector3(lightX, (lightY + 25), lightZ), new THREE.Vector3(1,0,1));
             scene.addConstraint(constraint);
             constraint.setLimits(-10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
+            */
+            
+            var constraint = new Physijs.ConeTwistConstraint(
+                bulb, // First object to be constrained
+                physijs_mesh_b, // Second object to be constrained
+                new THREE.Vector3( lightX, lightY+25, lightZ ) // point in the scene to apply the constraint
+            );
+            scene.addConstraint( constraint );
+            constraint.setLimit( 10, 10, 10 ); // rotational limit, in radians, for each axis
+            constraint.setMotorMaxImpulse( 10 ); // float value of the maximum impulse the motor can apply toward its target
+            constraint.setMotorTarget( new THREE.Vector3(1,0,1) ); // target is the desired rotation for the constraint and can be expressed by a THREE.Vector3, THREE.Matrix4, or THREE.Quaternion
+            constraint.enableMotor();
+            constraint.disableMotor();
         });
     }
 
