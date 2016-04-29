@@ -270,6 +270,7 @@
                 0, //mass
                 {retitution: 0.2, friction: 0.8}
             );
+            table.name = "table";
             table.castShadow = true;
             table.receiveShadow = true;
             scene.add(table);
@@ -374,12 +375,14 @@
 
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                console.log(String(other_object.name).substring(0, 5));
-                console.log(String(power));
-                console.log(String(hammer.position.y) + " + " + String(other_object.position.y));
-                if ( (String(other_object.name).substring(0, 5) == "fruit") && (power > 75) && (hammer.position.y > 8 ) ){
-                    console.log("collision!");
+                console.log(relative_velocity.y);
+                if ( (other_object.name.substring(0, 5) == "fruit") && (power > 75) && (relative_velocity.y < -1) ){
                     spawnPieces(other_object);
+                }
+                else if ( (other_object.name == "table") && (relative_velocity.y < -1) ){ //less than 0 when hammer is moving down
+                    spawnDecal(hammer, "hammer");
+                    bulb.position.set(lightX, lightY+1, lightZ); //isn't moving light
+                    requestAnimationFrame(render);
                 }
             });
 
