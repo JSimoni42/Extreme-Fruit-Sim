@@ -42,6 +42,7 @@
     var fruitCounter = 0;
     var pickable_objects = [];
     var fruit_pieces = [];
+    var hammer_hitting = false;
     
     var decals = [];
     var meshToIntersect;
@@ -53,7 +54,6 @@
     var camX = 0;
     var camY = 50;
     var camZ = 100;    
-    
     var camLookX = 0;
     var camLookY = 0;
     var camLookZ = 0;  
@@ -298,7 +298,7 @@
         spawnFruit();
 
         intersect_plane = new THREE.Mesh(
-            new THREE.PlaneGeometry( 150, 150 ),
+            new THREE.PlaneGeometry( 500, 500 ),
             new THREE.MeshBasicMaterial({opacity: 0, transparent: true})
         );
         intersect_plane.rotation.x = Math.PI / -2;
@@ -396,16 +396,17 @@
             hammer.receiveShadow = true;
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                if ( (other_object.name.substring(0, 5) == "fruit") && (power > 75) && (relative_velocity.y < -1) ){
+                if (((other_object.name.substring(0, 5) == "fruit") && (power > 75)) && (((relative_velocity.y < -50) && (selected_obj != hammer)) || (hammer_hitting))){
                     spawnPieces(other_object);
                 }
                 else if ( (other_object.name == "table") && (relative_velocity.y < -1) ){ //less than 0 when hammer is moving down
-                    spawnDecal(hammer, "hammer");
-                    bulb.position.x = bulb.position.x + 1;
+                    //spawnDecal(hammer, "hammer");
+                    console.log("hammer missed and hit table");
+                    bulb.position.y = bulb.position.y + 1;
                     bulb.__dirtyPosition = true;
                 }
+                hammer_hitting = false;
             });
-
             scene.add(hammer);
             pickable_objects.push(hammer);
 		});
@@ -430,13 +431,13 @@
         };
     }
     
-    /*
+/*
     spawnDecal = function(object, type) { //object is the object that hit the other object, either the fruit piece or the hammer. type is "fruit" or "hammer"
         console.log("We have collision with object of type " + type + " at position " + String(object.position.x) + String(object.position.y) + String(object.position.z));
 
-        texture_loader = new THREE.TextureLoader();
+        decal_loader = new THREE.TextureLoader();
         var decalMaterial = new THREE.MeshLambertMaterial( {
-            map: texture_loader.load('images/SplatterRound0057_S.jpg'),
+            map: decal_loader.load('images/SplatterRound0057_S.jpg'),
             transparent: true, 
             depthTest: true,
             depthWrite: false,
@@ -462,7 +463,7 @@
         scene.add(decal);
 
     }
-    */
+*/
     
     spawnFruit = function() {
         model_loader.load("models/watermelon.json",
@@ -483,13 +484,12 @@
             var fruit_piece;
             var dir_root = "models/piece"
             for (var i = 1; i <= 7; i++){
-                console.log("adding: " + dir_root + i + ".json");
                 model_loader.load(dir_root + i + ".json",
                 function(geometry, materials){
                     fruit_pieces.unshift(new Physijs.ConvexMesh(geometry, melon_material, 3));
                 
                     fruit_pieces[0].addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                        spawnDecal(fruit_pieces[0], "fruit");
+                        //spawnDecal(fruit_pieces[0], "fruit");
                     });
                 });
             }
@@ -500,22 +500,6 @@
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
-        
-        /*
-        var onKeyDown = function (evt) {
-             console.log("test");
-            switch (evt.keyCode) {
-                case KeyCode.LeftShift:
-                    console.log("test");
-            }
-        }
-        */
-        /*
-        var onKeyUp = function (evt) {
-            switch (evt.keyCode) {
-
-            }
-        }; */
 
         handleMouseDown = function(evt) {
             var ray, intersection;
@@ -529,12 +513,16 @@
             intersection = ray.intersectObjects(pickable_objects);
             if (intersection.length > 0) {
                 selected_obj = intersection[0].object;
-
+                
+                if(selected_obj == hammer){
+                    hammer.rotation.set((-45*Math.PI/180),0,(-90*Math.PI/180));
+                    selected_obj.__dirtyRotation = true;
+                }
                 _vector.set(0, 0, 0);
                 selected_obj.setAngularFactor(_vector);
                 selected_obj.setAngularVelocity(_vector);
                 selected_obj.setLinearFactor(_vector);
-                selected_obj.setLinearVelocity(_vector);
+                selected_obj.setLinearVelocity(_vector);            
 
                 mouse_position.copy(intersection[0].point);
 
@@ -582,18 +570,22 @@
     function keydown(ev) {
         switch (ev.keyCode) {
             case 16: //shift
+                if(selected_obj == hammer){
+                    hammer.rotation.set((-45*Math.PI/180),0,(-90*Math.PI/180));
+                    selected_obj.__dirtyRotation = true;
+                }
                 selected_obj.position.y = selected_obj.position.y + 5
                 selected_obj.__dirtyPosition = true;
                 break;
-   
+
             case 32: //space
-                while (selected_obj.position.y > 0) {
-                    selected_obj.position.y = selected_obj.position.y - 1
-                    selected_obj.__dirtyPosition = true;
-                    requestAnimationFrame(render);
-                }
+                hammer_hitting = true;
+                hammer.rotation.set((90*Math.PI/180),(90*Math.PI/180),(0*Math.PI/180));
+                selected_obj.__dirtyRotation = true;
+                selected_obj.position.y = 2;
+                selected_obj.__dirtyPosition = true;
                 break;
-   
+
             default: 
                 return;
         }
