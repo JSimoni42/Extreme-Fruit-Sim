@@ -369,14 +369,7 @@
             bulb.position.set(lightX, lightY, lightZ);
             scene.add(bulb);
             pickable_objects.push(bulb);
-            
-            /* hinge constraint
-            
-            var constraint = new Physijs.HingeConstraint(bulb, new THREE.Vector3(lightX, (lightY + 25), lightZ), new THREE.Vector3(1,0,1));
-            scene.addConstraint(constraint);
-            constraint.setLimits(-10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
-            */
-            
+
             var constraint = new Physijs.ConeTwistConstraint(
                 bulb, // First object to be constrained
                 ceiling, // Second object to be constrained
@@ -396,6 +389,7 @@
                 15, //mass
                 {retitution: 0.2, friction: 0.8}
             );
+            hammer.name = "hammer";
             hammer.position.set(-15,.1,10);
             hammer.rotation.set(0,(-90*Math.PI/180),0);
             hammer.castShadow = true;
@@ -403,7 +397,6 @@
 
 
             hammer.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-                console.log(relative_velocity.y);
                 if ( (other_object.name.substring(0, 5) == "fruit") && (power > 75) && (relative_velocity.y < -1) ){
                     spawnPieces(other_object);
                 }
@@ -577,6 +570,18 @@
         };
     }();
 
+    function keydown(ev) {
+        switch (ev.keyCode) {
+            case 80: //P key
+                selected_obj.position.y = selected_obj.position.y + 5
+                break;
+   
+            default: 
+                return;
+        }
+    };
+    
+    
     init = function() {
         initEngine();
         initLights();
@@ -586,6 +591,10 @@
         initEventHandling();
         requestAnimationFrame(render);
         scene.simulate();
+        
+        document.onkeydown = function(ev){
+            keydown(ev);
+        };
     };
 
 
