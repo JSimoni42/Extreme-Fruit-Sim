@@ -4,5 +4,8 @@
 
 - light is usable --> force material change to non-emmisive?
 
-- controls readme
+- controls in readme
 	- controls textbox in the gui? Or an "i" button like in the three.js examples
+
+- FILL OUT SOURCES in sources.txt (and in the proposal?)
+- download completed proposal in PDF form and put it in the git repo
