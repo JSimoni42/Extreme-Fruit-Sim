@@ -36,7 +36,7 @@
     var lights = {};
     var camera;
 
-    var floor, wall1, wall2, wall3, wall4;
+    var floor, ceiling, wall1, wall2, wall3, wall4;
     var table, melon, bulb, hammer;
     var allFruits = [];
     var fruitCounter = 0;
@@ -218,6 +218,15 @@
         floor.receiveShadow = true;
         scene.add(floor);
 
+        ceiling = new Physijs.BoxMesh(
+            room_piece,
+            floor_material,
+            0 // mass
+        );
+        ceiling.position.set(0,50,50);
+        ceiling.receiveShadow = true;
+        scene.add(ceiling);
+        
         wall1 = new Physijs.BoxMesh(
             room_piece,
             wall_material,
@@ -362,15 +371,11 @@
             
             var constraint = new Physijs.ConeTwistConstraint(
                 bulb, // First object to be constrained
-                physijs_mesh_b, // Second object to be constrained
+                ceiling, // Second object to be constrained
                 new THREE.Vector3( lightX, lightY+25, lightZ ) // point in the scene to apply the constraint
             );
             scene.addConstraint( constraint );
-            constraint.setLimit( 10, 10, 10 ); // rotational limit, in radians, for each axis
-            constraint.setMotorMaxImpulse( 10 ); // float value of the maximum impulse the motor can apply toward its target
-            constraint.setMotorTarget( new THREE.Vector3(1,0,1) ); // target is the desired rotation for the constraint and can be expressed by a THREE.Vector3, THREE.Matrix4, or THREE.Quaternion
-            constraint.enableMotor();
-            constraint.disableMotor();
+            constraint.setLimit( (30*Math.PI/180), (30*Math.PI/180), (30*Math.PI/180) ); // rotational limit, in radians, for each axis
         });
     }
 
