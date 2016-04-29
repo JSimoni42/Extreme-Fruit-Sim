@@ -156,7 +156,6 @@
         floor_material.map.repeat.set(20, 20);
 
         var wallTex = texture_loader.load("images/cinderblock.jpg");
-        // Materials
         wall_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: wallTex}),
             .9, // high friction
@@ -166,12 +165,13 @@
         wall_material.map.wrapT = THREE.RepeatWrapping;
         wall_material.map.repeat.set(3, 3);
         
-        //trying to get bumpmapping to work
         wall_material.bumpMap = wallTex;
         wall_material.bumpScale = 0.2;
 
+        
+        var tableTex = texture_loader.load("images/wood2.jpg");
         table_material = Physijs.createMaterial(
-            new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/wood2.jpg' )}),
+            new THREE.MeshLambertMaterial({ map: tableTex}),
             .9, // high friction
             .2 // low restitution
         );
@@ -179,6 +179,9 @@
         table_material.map.wrapT = THREE.RepeatWrapping;
         table_material.map.repeat.set(1, 1);
 
+        table_material.bumpMap = tableTex;
+        table_material.bumpScale = 0.2;
+        
         hammer_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
             .4, // medium friction
@@ -188,8 +191,10 @@
         hammer_material.map.wrapT = THREE.RepeatWrapping;
         hammer_material.map.repeat.set(1, 1);
 
+        
+        var melonTex = texture_loader.load("images/melon.jpg");
         melon_material = Physijs.createMaterial(
-          new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/melon.jpg' )}),
+          new THREE.MeshLambertMaterial({ map: melonTex}),
           .4, // medium friction
           .4 // medium restitution
         );
@@ -197,6 +202,9 @@
         melon_material.map.wrapT = THREE.RepeatWrapping;
         melon_material.map.repeat.set(.5, .5);
 
+        melon_material.bumpMap = melonTex;
+        melon_material.bumpScale = 0.2;
+        
         bulb_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({emissive: 0xFFFFFF}),
           .4, // medium friction
@@ -490,14 +498,17 @@
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
-
-        /* var onKeyDown = function (evt) {
+        
+        /*
+        var onKeyDown = function (evt) {
+             console.log("test");
             switch (evt.keyCode) {
                 case KeyCode.LeftShift:
                     console.log("test");
             }
-        };
-
+        }
+        */
+        /*
         var onKeyUp = function (evt) {
             switch (evt.keyCode) {
 
@@ -526,7 +537,6 @@
                 mouse_position.copy(intersection[0].point);
 
                 intersect_plane.position.y = mouse_position.y;
-                //container.style.cursor = 'move';
 			}
         }
 
