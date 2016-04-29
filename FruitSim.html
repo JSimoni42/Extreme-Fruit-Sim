@@ -42,7 +42,7 @@
     var fruitCounter = 0;
     var pickable_objects = [];
     var fruit_pieces = [];
-    
+
     var decals = [];
     var meshToIntersect;
     var position = new THREE.Vector3( 0, 0, 0 );
@@ -52,16 +52,16 @@
 
     var camX = 0;
     var camY = 50;
-    var camZ = 100;    
-    
+    var camZ = 100;
+
     var camLookX = 0;
     var camLookY = 0;
-    var camLookZ = 0;  
-    
+    var camLookZ = 0;
+
     var lightX = -35;
     var lightY = 20;
     var lightZ = 0;
-    
+
     var floor_material, wall_material, table_material, hammer_material, melon_material, bulb_material;
 
     var intersect_plane;
@@ -70,6 +70,9 @@
 
     var _i;
     var _v3 = new THREE.Vector3;
+
+    var spawnGnats;
+    var gnats = [];
 
     initEngine = function() {
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -164,11 +167,11 @@
         wall_material.map.wrapS = THREE.RepeatWrapping;
         wall_material.map.wrapT = THREE.RepeatWrapping;
         wall_material.map.repeat.set(3, 3);
-        
+
         wall_material.bumpMap = wallTex;
         wall_material.bumpScale = 0.2;
 
-        
+
         var tableTex = texture_loader.load("images/wood2.jpg");
         table_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: tableTex}),
@@ -181,7 +184,7 @@
 
         table_material.bumpMap = tableTex;
         table_material.bumpScale = 0.2;
-        
+
         hammer_material = Physijs.createMaterial(
             new THREE.MeshLambertMaterial({ map: texture_loader.load( 'images/plywood.jpg' )}),
             .4, // medium friction
@@ -191,7 +194,7 @@
         hammer_material.map.wrapT = THREE.RepeatWrapping;
         hammer_material.map.repeat.set(1, 1);
 
-        
+
         var melonTex = texture_loader.load("images/melon.jpg");
         melon_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({ map: melonTex}),
@@ -204,7 +207,7 @@
 
         melon_material.bumpMap = melonTex;
         melon_material.bumpScale = 0.2;
-        
+
         bulb_material = Physijs.createMaterial(
           new THREE.MeshLambertMaterial({emissive: 0xFFFFFF}),
           .4, // medium friction
@@ -234,7 +237,7 @@
         ceiling.position.set(0,50,50);
         ceiling.receiveShadow = true;
         scene.add(ceiling);
-        
+
         wall1 = new Physijs.BoxMesh(
             room_piece,
             wall_material,
@@ -278,7 +281,7 @@
         wall4.castShadow = true;
         wall4.receiveShadow = true;
         scene.add(wall4);
-        
+
         model_loader.load("models/table.json",
         function(geometry, materials){
             table = new Physijs.ConvexMesh(
@@ -338,7 +341,7 @@
             scene.remove(fruit_pieces[i]);
         }
         fruit_pieces = [];
-        
+
         scene.remove(hammer);
         scene.remove(bulb);
         pickable_objects = [];
@@ -351,6 +354,10 @@
     render = function() {
         if (lights.point_light && bulb) {
             lights.point_light.position.set(bulb.position.x, bulb.position.y+5, bulb.position.z);
+        }
+        for (var i = 0; i < gnats.length; i++){
+          gnats[i].rotation.y += 0.1;
+          gnats[i].rotation.x += 0.05;
         }
         requestAnimationFrame(render);
         renderer.render(scene, camera);
@@ -369,14 +376,14 @@
             bulb.position.set(lightX, lightY, lightZ);
             scene.add(bulb);
             pickable_objects.push(bulb);
-            
+
             /* hinge constraint
-            
+
             var constraint = new Physijs.HingeConstraint(bulb, new THREE.Vector3(lightX, (lightY + 25), lightZ), new THREE.Vector3(1,0,1));
             scene.addConstraint(constraint);
             constraint.setLimits(-10 * (Math.PI/180), 10 * (Math.PI/180), 1, 0.0);
             */
-            
+
             var constraint = new Physijs.ConeTwistConstraint(
                 bulb, // First object to be constrained
                 ceiling, // Second object to be constrained
@@ -432,15 +439,42 @@
             function(geometry, materials){
                 fruit_pieces.unshift(new Physijs.ConvexMesh(geometry, melon_material, 3));
                 fruit_pieces[0].position.set(flx, fly, flz);
-                
+
                 fruit_pieces[0].addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
                     spawnDecal(fruit_pieces[0], "fruit");
                 });
-                
+
                 scene.add(fruit_pieces[0]);
                 pickable_objects.push(fruit_pieces[0]);
             });
         }
+    }
+
+    spawnGnats = function(obj) {
+        var particleCount = Math.random() * 5;
+        var particles = new THREE.Geometry();
+        var pMaterial = new THREE.PointsMaterial({
+          color:0x302005,
+          size:0.75
+        // map: THREE.ImageUtils.loadTexture( "images/particle.png" ),
+        // blending: THREE.AdditiveBlending,
+        // transparent: true
+        });
+        var pX, pY, pZ, particle;
+        for (var p = 0; p < particleCount; p++) {
+          pX = Math.random() * 2;
+          pY = Math.random() * 2;
+          pZ = Math.random() * 2;
+          particle = new THREE.Vector3(pX, pY, pZ);
+          particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
+          particles.vertices.push(particle);
+        }
+        var particleSystem = new THREE.Points(particles, pMaterial);
+        particleSystem.sortParticles = true;
+        obj.add(particleSystem);
+        particleSystem.position.set(0, 15, 0);
+        gnats.push(particleSystem);
+        // scene.add(particleSystem);
     }
 
     /*
@@ -450,33 +484,33 @@
         texture_loader = new THREE.TextureLoader();
         var decalMaterial = new THREE.MeshLambertMaterial( {
             map: texture_loader.load('images/SplatterRound0057_S.jpg'),
-            transparent: true, 
+            transparent: true,
             depthTest: true,
             depthWrite: false,
             polygonOffset: true,
             polygonOffsetFactor: -4,
         });
-        
+
         meshToIntersect = new THREE.Mesh()
-        
+
         position = (object.position);
-        
-        var decalGeometry = new THREE.DecalGeometry(  
+
+        var decalGeometry = new THREE.DecalGeometry(
             meshToIntersect = new THREE.Mesh(),
-            position, // THREE.Vector3 in world coordinates  
-            direction, // THREE.Vector3 specifying the orientation of the decal  
-            dimensions, // THREE.Vector3 specifying the size of the decal box  
-            check // THREE.Vector3 specifying what sides to clip (1-clip, 0-noclip)  
+            position, // THREE.Vector3 in world coordinates
+            direction, // THREE.Vector3 specifying the orientation of the decal
+            dimensions, // THREE.Vector3 specifying the size of the decal box
+            check // THREE.Vector3 specifying what sides to clip (1-clip, 0-noclip)
         );
-        
+
         var decal = new THREE.Mesh( decalGeometry, decalMaterial );
-        
+
         decals.push(decal);
         scene.add(decal);
 
     }
     */
-    
+
     spawnFruit = function() {
         model_loader.load("models/watermelon.json",
         function(geometry, materials){
@@ -490,6 +524,7 @@
             allFruits[fruitCounter].castShadow = true;
             allFruits[fruitCounter].receiveShadow = true;
             scene.add(allFruits[fruitCounter]);
+            spawnGnats(allFruits[fruitCounter]);
             pickable_objects.push(allFruits[fruitCounter]);
             fruitCounter += 1;
 		});
@@ -498,7 +533,7 @@
     initEventHandling = function() {
         var _vector = new THREE.Vector3,
             handleMouseDown, handleMouseMove, handleMouseUp;
-        
+
         /*
         var onKeyDown = function (evt) {
              console.log("test");
