@@ -1,7 +1,5 @@
 README for Fruit Simulator (https://github.com/JSimoni42/Extreme-Fruit-Sim)
 
-Try it out at: http://jsimoni42.github.io/Extreme-Fruit-Sim/
-
 For best performance, run in Google Chrome. The game will also load in Microsoft Edge and Mozilla Firefox but extensive testing has not been done on those browsers.
 
 To play the game, you must smash the fruit. In order for the fruit to break, there are a couple of requirements.
